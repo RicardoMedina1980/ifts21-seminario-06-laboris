@@ -58,7 +58,7 @@ El fork actual se encuentra **3 commits adelantado** respecto al `main` del repo
 
 Esta rama (`reporte/hito-1-scrum-master`) agrega únicamente el presente documento como trazabilidad del Hito 1.
 
----
+----
 
 ## 📅 Próximos pasos (Sprint 2)
 
