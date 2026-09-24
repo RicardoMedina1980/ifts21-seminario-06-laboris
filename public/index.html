@@ -6,25 +6,19 @@
   <title>Laboris | Estudio Jurídico Laboral</title>
   <meta name="description" content="Laboris: estudio jurídico especializado en derecho laboral y accidentes de trabajo.">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- [JOSÉ] Script anti-flash: se ejecuta antes de renderizar el CSS para evitar parpadeo del tema -->
   <script>
     const theme = localStorage.getItem('theme-preference') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
   </script>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-
   <a class="la-skip-link" href="#contenido">Saltar al contenido</a>
-
   <nav class="navbar navbar-expand-lg fixed-top la-navbar" id="siteNav">
     <div class="container">
       <a class="navbar-brand la-brand" href="#inicio">
@@ -41,14 +35,11 @@
           <li class="nav-item"><a class="nav-link la-nav-link" href="#consulta" data-section="consulta">Mi expediente</a></li>
           <li class="nav-item"><a class="nav-link la-nav-link" href="#honorarios" data-section="honorarios">Honorarios</a></li>
           <li class="nav-item"><a class="nav-link la-nav-link" href="#contacto" data-section="contacto">Contacto</a></li>
-          
-          <!-- [JOSÉ] Botón toggle de tema agregado en el Navbar -->
           <li class="nav-item">
             <button class="btn la-btn la-btn-outline ms-lg-2" id="btnToggleTema" aria-label="Cambiar tema">
               <i class="bi bi-moon-stars-fill" id="iconoTema"></i>
             </button>
           </li>
-          
           <li class="nav-item"><a class="nav-link la-nav-cta" href="#consulta">Consultar expediente</a></li>
         </ul>
       </div>
@@ -144,7 +135,11 @@
               <p>Número de expediente (sin guiones ni espacios)</p>
               <div class="la-consulta-form">
                 <input class="form-control la-input" id="expedienteInput" type="text" placeholder="Ej: 12345/2026" maxlength="12" aria-label="Número de expediente">
-                <button class="btn la-btn la-btn-primary" id="consultarBtn" type="button"><i class="bi bi-search"></i> Consultar</button>
+                <button class="btn la-btn la-btn-primary" id="consultarBtn" type="button">
+                  <!-- [ZOE - Sprint 3 - Día 1] Nuevos aportes de Zoe: Estructura para Spinner de carga -->
+                  <span class="la-btn-text"><i class="bi bi-search"></i> Consultar</span>
+                  <div class="la-spinner la-spinner-sm" id="spinnerConsulta" style="display:none;"></div>
+                </button>
               </div>
               <div id="consultaResultado" class="la-consulta-resultado" aria-live="polite"></div>
             </div>
@@ -172,7 +167,6 @@
                 <div class="col-md-6">
                   <label class="form-label la-label" for="nombre">Nombre</label>
                   <input class="form-control la-input" type="text" id="nombre" placeholder="Tu nombre completo" required>
-                  <!-- [JOSÉ] Div de feedback para validación en tiempo real -->
                   <div class="invalid-feedback"></div>
                 </div>
                 <div class="col-md-6">
@@ -181,15 +175,12 @@
                   <div class="invalid-feedback"></div>
                 </div>
               </div>
-              
-              <!-- [JOSÉ] Cambio de "Teléfono" a "Celular" con placeholder y texto de ayuda -->
               <div class="mb-3">
                 <label class="form-label la-label" for="celular">Celular</label>
                 <input class="form-control la-input" type="tel" id="celular" placeholder="11-XXXX-XXXX" required>
                 <small class="form-text text-muted">Formato: 11-1234-5678</small>
                 <div class="invalid-feedback"></div>
               </div>
-
               <div class="mb-3">
                 <label class="form-label la-label" for="tipoConsulta">Tipo de consulta</label>
                 <select class="form-select la-input" id="tipoConsulta" required>
@@ -201,16 +192,15 @@
                 </select>
                 <div class="invalid-feedback"></div>
               </div>
-
               <div class="mb-3">
                 <label class="form-label la-label" for="descripcion">Describí tu situación</label>
                 <textarea class="form-control la-input" id="descripcion" rows="4" placeholder="¿Qué pasó? ¿Cuándo?..." required></textarea>
                 <div class="invalid-feedback"></div>
               </div>
-
-              <!-- [JOSÉ] Botón con ID específico para ser deshabilitado por JS -->
               <button class="btn la-btn la-btn-primary w-100" id="btnEnviarConsulta" type="submit" disabled>
-                Enviar consulta <i class="bi bi-arrow-right"></i>
+                <!-- [ZOE - Sprint 3 - Día 1] Nuevos aportes de Zoe: Estructura para Spinner en botón -->
+                <span class="la-btn-text">Enviar consulta <i class="bi bi-arrow-right"></i></span>
+                <div class="la-spinner la-spinner-sm" id="spinnerEnvio" style="display:none;"></div>
               </button>
               <p class="la-form-message text-center mt-3" id="formMessage" aria-live="polite"></p>
             </form>
@@ -218,9 +208,29 @@
         </div>
       </div>
     </section>
+
+    <!-- [JOSÉ - Sprint 3 - Día 2] Nuevos aportes de José: Vista de Admin/Testing Oculta -->
+    <section id="adminView" class="la-admin-view" style="display:none;">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h3>🔒 Panel de Admin (Testing) - Consultas Recibidas</h3>
+            <p>Estos datos persisten en el localStorage del navegador (Simulación Sprint 3).</p>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr><th>ID</th><th>Fecha</th><th>Nombre</th><th>Email</th><th>Tipo</th><th>Mensaje</th></tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+              </table>
+            </div>
+            <button class="btn la-btn la-btn-outline" id="btnLimpiarAdmin">Borrar datos de prueba</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- [JOSÉ] Footer limpio, sin badge de Netlify -->
   <footer class="la-footer">
     <div class="container">
       <div class="row align-items-center text-center g-3">
@@ -231,7 +241,7 @@
           </a>
         </div>
         <div class="col-lg-4">
-          <p class="mb-0">© <span id="year"></span> Laboris · Proyecto educativo IFTS N° 21</p>
+          <p class="mb-0">© <span id="year">2026</span> Laboris · Proyecto educativo IFTS N° 21</p>
         </div>
         <div class="col-lg-4 text-lg-end">
           <span>Estudio Jurídico Laboral · Buenos Aires</span>
