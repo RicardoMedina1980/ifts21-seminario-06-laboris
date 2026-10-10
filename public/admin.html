@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboris DB - MySQL Workbench Simulator</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1e1e1e; color: #d4d4d4; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* BARRA SUPERIOR */
+.topbar { background: #2d2d30; border-bottom: 1px solid #3e3e42; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.topbar .logo { color: #007acc; font-weight: bold; font-size: 14px; }
+.topbar .db-name { color: #4ec9b0; }
+.topbar .back-btn { margin-left: auto; color: #9cdcfe; text-decoration: none; font-size: 12px; }
+.topbar .back-btn:hover { text-decoration: underline; }
+
+/* LAYOUT PRINCIPAL */
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* PANEL IZQUIERDO - ÁRBOL */
+.sidebar { width: 260px; background: #252526; border-right: 1px solid #3e3e42; overflow-y: auto; padding: 8px 0; }
+.sidebar-title { color: #cccccc; font-size: 11px; text-transform: uppercase; padding: 8px 12px; font-weight: bold; letter-spacing: 0.5px; }
+.tree-item { padding: 4px 12px 4px 20px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.tree-item:hover { background: #2a2d2e; }
+.tree-item.active { background: #094771; }
+.tree-item .icon { font-size: 12px; }
+.tree-db { color: #4ec9b0; font-weight: bold; padding-left: 12px; }
+.tree-table { color: #dcdcaa; padding-left: 28px; }
+.tree-column { color: #9cdcfe; padding-left: 44px; font-size: 12px; }
+.tree-column .type { color: #569cd6; margin-left: 4px; font-size: 11px; }
+
+/* PANEL CENTRAL */
+.center { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* EDITOR DE QUERIES */
+.query-editor { flex: 1; display: flex; flex-direction: column; border-bottom: 1px solid #3e3e42; min-height: 200px; }
+.query-toolbar { background: #2d2d30; padding: 6px 10px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #3e3e42; }
+.btn-execute { background: #0e639c; color: white; border: none; padding: 5px 14px; border-radius: 3px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 5px; }
+.btn-execute:hover { background: #1177bb; }
+.btn-execute .bolt { font-size: 15px; }
+.btn-clear { background: transparent; color: #cccccc; border: 1px solid #3e3e42; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+.btn-clear:hover { background: #3e3e42; }
+.query-label { color: #858585; font-size: 11px; margin-left: auto; }
+#queryInput { flex: 1; background: #1e1e1e; color: #d4d4d4; border: none; padding: 12px; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; resize: none; outline: none; line-height: 1.5; }
+#queryInput:focus { background: #1e1e1e; }
+
+/* PANEL DE RESULTADOS */
+.results-panel { height: 280px; display: flex; flex-direction: column; background: #1e1e1e; }
+.results-tabs { background: #2d2d30; display: flex; border-bottom: 1px solid #3e3e42; }
+.tab { padding: 6px 16px; font-size: 12px; cursor: pointer; color: #969696; border-bottom: 2px solid transparent; }
+.tab.active { color: #ffffff; border-bottom-color: #007acc; }
+.tab:hover { color: #ffffff; }
+.results-content { flex: 1; overflow: auto; padding: 8px; }
+#resultsOutput { font-family: 'Consolas', monospace; font-size: 13px; white-space: pre-wrap; color: #d4d4d4; }
+#resultsOutput.success { color: #4ec9b0; }
+#resultsOutput.error { color: #f44747; }
+#resultsOutput.info { color: #569cd6; }
+
+/* TABLA DE RESULTADOS */
+.result-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.result-table th { background: #2d2d30; color: #4ec9b0; padding: 6px 10px; text-align: left; border: 1px solid #3e3e42; font-weight: bold; }
+.result-table td { padding: 5px 10px; border: 1px solid #3e3e42; color: #d4d4d4; }
+.result-table tr:nth-child(even) td { background: #252526; }
+
+/* HISTORIAL */
+.history-panel { width: 280px; background: #252526; border-left: 1px solid #3e3e42; overflow-y: auto; display: flex; flex-direction: column; }
+.history-title { color: #cccccc; font-size: 11px; text-transform: uppercase; padding: 8px 12px; font-weight: bold; border-bottom: 1px solid #3e3e42; }
+.history-item { padding: 8px 12px; border-bottom: 1px solid #2d2d30; cursor: pointer; font-size: 12px; }
+.history-item:hover { background: #2a2d2e; }
+.history-item .time { color: #858585; font-size: 10px; }
+.history-item .query-text { color: #9cdcfe; margin-top: 3px; font-family: 'Consolas', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item .status-ok { color: #4ec9b0; font-size: 10px; }
+.history-item .status-err { color: #f44747; font-size: 10px; }
+.history-empty { color: #858585; font-size: 12px; padding: 20px 12px; text-align: center; }
+
+/* STATUS BAR */
+.statusbar { background: #007acc; color: white; padding: 3px 12px; font-size: 11px; display: flex; justify-content: space-between; }
+.statusbar .status-left { display: flex; gap: 15px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #1e1e1e; }
+::-webkit-scrollbar-thumb { background: #424242; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
+</style>
+</head>
+<body>
+
+<!-- BARRA SUPERIOR -->
+<div class="topbar">
+  <span class="logo">⚡ MySQL Workbench Simulator</span>
+  <span style="color:#858585;">|</span>
+  <span class="db-name" id="currentDbName">laboris_db</span>
+  <a href="index.html" class="back-btn">← Volver a Laboris</a>
+</div>
+
+<div class="main">
+
+  <!-- PANEL IZQUIERDO: ÁRBOL DE OBJETOS -->
+  <div class="sidebar">
+    <div class="sidebar-title">📂 Esquemas</div>
+    <div id="schemaTree"></div>
+  </div>
+
+  <!-- PANEL CENTRAL -->
+  <div class="center">
+
+    <!-- EDITOR DE QUERIES -->
+    <div class="query-editor">
+      <div class="query-toolbar">
+        <button class="btn-execute" onclick="executeQuery()">
+          <span class="bolt">⚡</span> Ejecutar
+        </button>
+        <button class="btn-clear" onclick="clearEditor()">️ Limpiar</button>
+        <button class="btn-clear" onclick="loadTemplate()">📋 Cargar plantilla SQL</button>
+        <span class="query-label">Query 1 · laboris_db</span>
+      </div>
+      <textarea id="queryInput" spellcheck="false" placeholder="-- Escribí tu query SQL acá y apretá ⚡ Ejecutar
+-- Ejemplo:
+SELECT * FROM consultas;"></textarea>
+    </div>
+
+    <!-- PANEL DE RESULTADOS -->
+    <div class="results-panel">
+      <div class="results-tabs">
+        <div class="tab active" onclick="switchTab('results', this)">📊 Resultados</div>
+        <div class="tab" onclick="switchTab('messages', this)">💬 Mensajes</div>
+        <div class="tab" onclick="switchTab('history', this)">📜 Historial</div>
+      </div>
+      <div class="results-content" id="resultsContent">
+        <div id="resultsOutput" class="info">Listo para ejecutar queries. Apretá ⚡ o usá Ctrl+Enter.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PANEL DERECHO: HISTORIAL -->
+  <div class="history-panel">
+    <div class="history-title">📜 Historial de Queries</div>
+    <div id="historyList">
+      <div class="history-empty">Sin queries ejecutadas</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BARRA DE ESTADO -->
+<div class="statusbar">
+  <div class="status-left">
+    <span id="statusMsg">Listo</span>
+    <span id="rowCount"></span>
+  </div>
+  <span>MySQL Simulator v1.0 · localStorage</span>
+</div>
+
+<script>
+// ============================================
+// MOTOR DE BASE DE DATOS SIMULADA
+// ============================================
+
+const DB_KEY = 'laboris_db_schema';
+const DATA_PREFIX = 'laboris_db_data_';
+
+// Esquema por defecto (las 3 tablas vacías)
+const defaultSchema = {
+  databases: {
+    laboris_db: {
+      tables: {
+        clientes: {
+          columns: [
+            { name: 'id', type: 'INT', autoIncrement: true, primaryKey: true },
+            { name: 'nombre', type: 'VARCHAR(100)', notNull: true },
+            { name: 'email', type: 'VARCHAR(100)', notNull: true },
+            { name: 'celular', type: 'VARCHAR(20)' },
+            { name: 'fecha_registro', type: 'DATETIME', default: 'CURRENT_TIMESTAMP' }
+          ],
+          data: []
+        },
+        expedientes: {
+          columns: [
+            { name: 'id', type: 'INT', autoIncrement: true, primaryKey: true },
+            { name: 'numero', type: 'VARCHAR(20)', unique: true, notNull: true },
+            { name: 'caratula', type: 'VARCHAR(200)' },
+            { name: 'estado', type: 'VARCHAR(50)', notNull: true },
+            { name: 'etapa', type: 'VARCHAR(100)' },
+            { name: 'fecha', type: 'DATE' },
+            { name: 'cliente_id', type: 'INT' }
+          ],
+          data: []
+        },
+        consultas: {
+          columns: [
+            { name: 'id', type: 'INT', autoIncrement: true, primaryKey: true },
+            { name: 'nombre', type: 'VARCHAR(100)', notNull: true },
+            { name: 'email', type: 'VARCHAR(100)', notNull: true },
+            { name: 'celular', type: 'VARCHAR(20)' },
+            { name: 'tipo_consulta', type: 'VARCHAR(50)' },
+            { name: 'mensaje', type: 'TEXT' },
+            { name: 'fecha_envio', type: 'DATETIME', default: 'CURRENT_TIMESTAMP' }
+          ],
+          data: []
+        }
+      }
+    }
+  }
+};
+
+let schema = loadSchema();
+let history = [];
+let currentDb = 'laboris_db';
+
+function loadSchema() {
+  const saved = localStorage.getItem(DB_KEY);
+  if (saved) return JSON.parse(saved);
+  saveSchema(defaultSchema);
+  return defaultSchema;
+}
+
+function saveSchema(s) {
+  localStorage.setItem(DB_KEY, JSON.stringify(s));
+}
+
+function getTableData(tableName) {
+  return schema.databases[currentDb].tables[tableName].data;
+}
+
+function setTableData(tableName, data) {
+  schema.databases[currentDb].tables[tableName].data = data;
+  saveSchema(schema);
+}
+
+function nextId(tableName) {
+  const data = getTableData(tableName);
+  return data.length > 0 ? Math.max(...data.map(r => r.id)) + 1 : 1;
+}
+
+// ============================================
+// RENDERIZADO DEL ÁRBOL
+// ============================================
+
+function renderTree() {
+  const tree = document.getElementById('schemaTree');
+  tree.innerHTML = '';
+
+  Object.keys(schema.databases).forEach(dbName => {
+    const db = schema.databases[dbName];
+    const dbEl = document.createElement('div');
+    dbEl.className = 'tree-item tree-db';
+    dbEl.innerHTML = `<span class="icon">️</span> ${dbName}`;
+    tree.appendChild(dbEl);
+
+    Object.keys(db.tables).forEach(tableName => {
+      const table = db.tables[tableName];
+      const tableEl = document.createElement('div');
+      tableEl.className = 'tree-item tree-table';
+      tableEl.innerHTML = `<span class="icon">📋</span> ${tableName} <span style="color:#858585;font-size:11px;">(${table.data.length})</span>`;
+      tableEl.onclick = () => loadTablePreview(tableName);
+      tree.appendChild(tableEl);
+
+      table.columns.forEach(col => {
+        const colEl = document.createElement('div');
+        colEl.className = 'tree-item tree-column';
+        let flags = [];
+        if (col.primaryKey) flags.push('PK');
+        if (col.notNull) flags.push('NN');
+        if (col.autoIncrement) flags.push('AI');
+        colEl.innerHTML = `<span class="icon"></span> ${col.name} <span class="type">${col.type}</span> <span style="color:#858585;font-size:10px;">${flags.join(' ')}</span>`;
+        tree.appendChild(colEl);
+      });
+    });
+  });
+}
+
+function loadTablePreview(tableName) {
+  const data = getTableData(tableName);
+  const table = schema.databases[currentDb].tables[tableName];
+  const cols = table.columns.map(c => c.name).join(', ');
+  document.getElementById('queryInput').value = `SELECT * FROM ${tableName};`;
+  showResults(data, table.columns, `SELECT * FROM ${tableName}; -- ${data.length} row(s) returned`);
+}
+
+// ============================================
+// PARSEADOR SQL BÁSICO
+// ============================================
+
+function executeQuery() {
+  const query = document.getElementById('queryInput').value.trim();
+  if (!query) {
+    showStatus('Query vacía', 'error');
+    return;
+  }
+
+  const startTime = Date.now();
+  let result, status, message;
+
+  try {
+    const upper = query.toUpperCase();
+
+    if (upper.startsWith('CREATE DATABASE')) {
+      result = handleCreateDatabase(query);
+      status = 'ok';
+      message = result;
+    } else if (upper.startsWith('CREATE TABLE')) {
+      result = handleCreateTable(query);
+      status = 'ok';
+      message = result;
+    } else if (upper.startsWith('INSERT INTO')) {
+      result = handleInsert(query);
+      status = 'ok';
+      message = result;
+    } else if (upper.startsWith('SELECT')) {
+      result = handleSelect(query);
+      status = 'ok';
+      message = `${result.data.length} row(s) returned`;
+      showResults(result.data, result.columns, message);
+    } else if (upper.startsWith('DROP TABLE')) {
+      result = handleDropTable(query);
+      status = 'ok';
+      message = result;
+    } else if (upper.startsWith('DROP DATABASE')) {
+      result = handleDropDatabase(query);
+      status = 'ok';
+      message = result;
+    } else if (upper.startsWith('SHOW TABLES')) {
+      const tables = Object.keys(schema.databases[currentDb].tables);
+      showResults(tables.map(t => ({ table_name: t })), [{ name: 'table_name', type: 'VARCHAR' }], `${tables.length} table(s)`);
+      message = `${tables.length} table(s)`;
+      status = 'ok';
+    } else if (upper.startsWith('DESCRIBE') || upper.startsWith('DESC ')) {
+      const tableName = query.split(/\s+/)[1].replace(';', '');
+      const table = schema.databases[currentDb].tables[tableName];
+      if (!table) throw new Error(`Table '${tableName}' doesn't exist`);
+      const rows = table.columns.map(c => ({
+        Field: c.name,
+        Type: c.type,
+        Null: c.notNull ? 'NO' : 'YES',
+        Key: c.primaryKey ? 'PRI' : '',
+        Default: c.default || 'NULL',
+        Extra: c.autoIncrement ? 'auto_increment' : ''
+      }));
+      showResults(rows, table.columns, `Describe ${tableName}`);
+      message = `OK`;
+      status = 'ok';
+    } else if (upper.startsWith('USE ')) {
+      const dbName = query.split(/\s+/)[1].replace(';', '');
+      if (schema.databases[dbName]) {
+        currentDb = dbName;
+        document.getElementById('currentDbName').textContent = dbName;
+        message = `Database changed to '${dbName}'`;
+        status = 'ok';
+      } else {
+        throw new Error(`Unknown database '${dbName}'`);
+      }
+    } else {
+      throw new Error('Comando SQL no soportado en este simulador');
+    }
+
+    const elapsed = Date.now() - startTime;
+    showStatus(`${message} (${elapsed}ms)`, 'success');
+    addToHistory(query, status, message);
+
+  } catch (err) {
+    showStatus(`Error: ${err.message}`, 'error');
+    showResultsError(err.message);
+    addToHistory(query, 'error', err.message);
+  }
+
+  renderTree();
+}
+
+function handleCreateDatabase(query) {
+  const match = query.match(/CREATE\s+DATABASE\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)/i);
+  if (!match) throw new Error('Sintaxis incorrecta');
+  const dbName = match[1];
+  if (schema.databases[dbName]) return `Database '${dbName}' already exists`;
+  schema.databases[dbName] = { tables: {} };
+  saveSchema(schema);
+  return `Database '${dbName}' created successfully`;
+}
+
+function handleCreateTable(query) {
+  const match = query.match(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)\s*\(([\s\S]+)\)\s*;?/i);
+  if (!match) throw new Error('Sintaxis incorrecta en CREATE TABLE');
+  const tableName = match[1];
+  const colsDef = match[2];
+
+  if (!schema.databases[currentDb]) throw new Error(`No database selected`);
+  if (schema.databases[currentDb].tables[tableName]) throw new Error(`Table '${tableName}' already exists`);
+
+  const columns = [];
+  const lines = colsDef.split(',').map(l => l.trim()).filter(l => l);
+
+  lines.forEach(line => {
+    // Ignorar FOREIGN KEY, PRIMARY KEY sueltos, etc.
+    if (line.toUpperCase().startsWith('PRIMARY KEY') || 
+        line.toUpperCase().startsWith('FOREIGN KEY') ||
+        line.toUpperCase().startsWith('UNIQUE') ||
+        line.toUpperCase().startsWith('INDEX') ||
+        line.toUpperCase().startsWith('CONSTRAINT')) return;
+
+    const parts = line.split(/\s+/);
+    const colName = parts[0];
+    const colType = parts[1] ? parts[1].toUpperCase() : 'VARCHAR(255)';
+    const rest = line.toUpperCase();
+
+    columns.push({
+      name: colName,
+      type: colType,
+      primaryKey: rest.includes('PRIMARY KEY'),
+      notNull: rest.includes('NOT NULL'),
+      autoIncrement: rest.includes('AUTO_INCREMENT'),
+      unique: rest.includes('UNIQUE'),
+      default: rest.includes('CURRENT_TIMESTAMP') ? 'CURRENT_TIMESTAMP' : null
+    });
+  });
+
+  schema.databases[currentDb].tables[tableName] = { columns, data: [] };
+  saveSchema(schema);
+  return `Table '${tableName}' created successfully with ${columns.length} column(s)`;
+}
+
+function handleInsert(query) {
+  const match = query.match(/INSERT\s+INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)\s*;?/i);
+  if (!match) throw new Error('Sintaxis incorrecta en INSERT');
+
+  const tableName = match[1];
+  const cols = match[2].split(',').map(c => c.trim());
+  const vals = match[3].split(',').map(v => v.trim().replace(/^['"]|['"]$/g, ''));
+
+  if (!schema.databases[currentDb].tables[tableName]) throw new Error(`Table '${tableName}' doesn't exist`);
+
+  const table = schema.databases[currentDb].tables[tableName];
+  const row = {};
+
+  cols.forEach((col, i) => {
+    row[col] = vals[i] === 'NULL' ? null : vals[i];
+  });
+
+  // AUTO_INCREMENT
+  const idCol = table.columns.find(c => c.autoIncrement);
+  if (idCol && !row[idCol.name]) {
+    row[idCol.name] = nextId(tableName);
+  }
+
+  // DEFAULT CURRENT_TIMESTAMP
+  table.columns.forEach(col => {
+    if (col.default === 'CURRENT_TIMESTAMP' && !row[col.name]) {
+      row[col.name] = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    }
+  });
+
+  // NOT NULL validation
+  table.columns.forEach(col => {
+    if (col.notNull && (row[col.name] === undefined || row[col.name] === null || row[col.name] === '')) {
+      throw new Error(`Column '${col.name}' cannot be null`);
+    }
+  });
+
+  // UNIQUE validation
+  table.columns.forEach(col => {
+    if (col.unique && row[col.name]) {
+      const exists = table.data.find(r => r[col.name] === row[col.name]);
+      if (exists) throw new Error(`Duplicate entry '${row[col.name]}' for key '${col.name}'`);
+    }
+  });
+
+  const data = getTableData(tableName);
+  data.push(row);
+  setTableData(tableName, data);
+
+  return `1 row(s) inserted into '${tableName}'`;
+}
+
+function handleSelect(query) {
+  const match = query.match(/SELECT\s+(.+?)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.+?))?\s*;?$/i);
+  if (!match) throw new Error('Sintaxis incorrecta en SELECT');
+
+  const colsStr = match[1].trim();
+  const tableName = match[2];
+  const whereClause = match[3];
+
+  if (!schema.databases[currentDb].tables[tableName]) throw new Error(`Table '${tableName}' doesn't exist`);
+
+  const table = schema.databases[currentDb].tables[tableName];
+  let data = [...table.data];
+
+  // WHERE básico
+  if (whereClause) {
+    const whereMatch = whereClause.match(/(\w+)\s*=\s*['"]?([^'"]+)['"]?/i);
+    if (whereMatch) {
+      const col = whereMatch[1];
+      const val = whereMatch[2];
+      data = data.filter(r => String(r[col]) === val);
+    }
+  }
+
+  // Columnas
+  let columns;
+  if (colsStr === '*') {
+    columns = table.columns;
+  } else {
+    const colNames = colsStr.split(',').map(c => c.trim());
+    columns = colNames.map(name => table.columns.find(c => c.name === name) || { name, type: 'VARCHAR' });
+    data = data.map(row => {
+      const newRow = {};
+      colNames.forEach(name => { newRow[name] = row[name] !== undefined ? row[name] : 'NULL'; });
+      return newRow;
+    });
+  }
+
+  return { data, columns };
+}
+
+function handleDropTable(query) {
+  const match = query.match(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(\w+)\s*;?/i);
+  if (!match) throw new Error('Sintaxis incorrecta');
+  const tableName = match[1];
+  if (!schema.databases[currentDb].tables[tableName]) throw new Error(`Table '${tableName}' doesn't exist`);
+  delete schema.databases[currentDb].tables[tableName];
+  saveSchema(schema);
+  return `Table '${tableName}' dropped`;
+}
+
+function handleDropDatabase(query) {
+  const match = query.match(/DROP\s+DATABASE\s+(?:IF\s+EXISTS\s+)?(\w+)\s*;?/i);
+  if (!match) throw new Error('Sintaxis incorrecta');
+  const dbName = match[1];
+  if (!schema.databases[dbName]) throw new Error(`Database '${dbName}' doesn't exist`);
+  delete schema.databases[dbName];
+  saveSchema(schema);
+  return `Database '${dbName}' dropped`;
+}
+
+// ============================================
+// UI HELPERS
+// ============================================
+
+function showResults(data, columns, message) {
+  const content = document.getElementById('resultsContent');
+  if (!data || data.length === 0) {
+    content.innerHTML = `<div id="resultsOutput" class="info">${message || '0 rows returned'}</div>`;
+    return;
+  }
+
+  let html = `<div style="color:#4ec9b0;margin-bottom:8px;font-size:12px;">${message}</div>`;
+  html += '<table class="result-table"><thead><tr>';
+  columns.forEach(col => {
+    html += `<th>${col.name} <span style="color:#569cd6;font-size:10px;">${col.type || ''}</span></th>`;
+  });
+  html += '</tr></thead><tbody>';
+  data.forEach(row => {
+    html += '<tr>';
+    columns.forEach(col => {
+      const val = row[col.name] !== undefined && row[col.name] !== null ? row[col.name] : 'NULL';
+      html += `<td>${val}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  content.innerHTML = html;
+  document.getElementById('rowCount').textContent = `${data.length} row(s)`;
+}
+
+function showResultsError(msg) {
+  const content = document.getElementById('resultsContent');
+  content.innerHTML = `<div id="resultsOutput" class="error">❌ Error: ${msg}</div>`;
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.style.color = type === 'error' ? '#f44747' : type === 'success' ? '#4ec9b0' : '#d4d4d4';
+}
+
+function addToHistory(query, status, message) {
+  history.unshift({ query, status, message, time: new Date().toLocaleTimeString() });
+  if (history.length > 50) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (history.length === 0) {
+    list.innerHTML = '<div class="history-empty">Sin queries ejecutadas</div>';
+    return;
+  }
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item" onclick="loadHistory(${i})">
+      <div class="time">${h.time} · <span class="${h.status === 'ok' ? 'status-ok' : 'status-err'}">${h.status === 'ok' ? '✓ OK' : '✗ Error'}</span></div>
+      <div class="query-text">${h.query}</div>
+    </div>
+  `).join('');
+}
+
+function loadHistory(i) {
+  document.getElementById('queryInput').value = history[i].query;
+}
+
+function clearEditor() {
+  document.getElementById('queryInput').value = '';
+  document.getElementById('queryInput').focus();
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  const content = document.getElementById('resultsContent');
+  if (tab === 'history') {
+    content.innerHTML = history.length === 0 
+      ? '<div class="history-empty">Sin queries ejecutadas</div>'
+      : history.map((h, i) => `
+          <div class="history-item" onclick="loadHistory(${i})" style="border-bottom:1px solid #3e3e42;">
+            <div class="time">${h.time} · <span class="${h.status === 'ok' ? 'status-ok' : 'status-err'}">${h.status === 'ok' ? '✓ OK' : '✗ Error'}</span></div>
+            <div class="query-text">${h.query}</div>
+            <div style="color:#858585;font-size:11px;margin-top:2px;">${h.message}</div>
+          </div>
+        `).join('');
+  } else if (tab === 'messages') {
+    content.innerHTML = '<div id="resultsOutput" class="info">Panel de mensajes del servidor MySQL simulado.</div>';
+  }
+}
+
+// ============================================
+// PLANTILLA SQL COMPLETA
+// ============================================
+
+function loadTemplate() {
+  document.getElementById('queryInput').value = `-- ============================================
+-- LABORIS DB - Script de creación completo
+-- Motor: MySQL (Simulado)
+-- ============================================
+
+-- 1. Crear la base de datos
+CREATE DATABASE laboris_db;
+
+-- 2. Seleccionar la base de datos
+USE laboris_db;
+
+-- 3. Crear tabla: clientes
+CREATE TABLE clientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  celular VARCHAR(20),
+  fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Crear tabla: expedientes
+CREATE TABLE expedientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  numero VARCHAR(20) UNIQUE NOT NULL,
+  caratula VARCHAR(200),
+  estado VARCHAR(50) NOT NULL,
+  etapa VARCHAR(100),
+  fecha DATE,
+  cliente_id INT
+);
+
+-- 5. Crear tabla: consultas
+CREATE TABLE consultas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  celular VARCHAR(20),
+  tipo_consulta VARCHAR(50),
+  mensaje TEXT,
+  fecha_envio DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 6. Insertar datos de ejemplo en clientes
+INSERT INTO clientes (nombre, email, celular) VALUES ('Juan García', 'juan@email.com', '11-2345-6789');
+INSERT INTO clientes (nombre, email, celular) VALUES ('María López', 'maria@email.com', '11-9876-5432');
+
+-- 7. Insertar datos de ejemplo en expedientes
+INSERT INTO expedientes (numero, caratula, estado, etapa, fecha, cliente_id) VALUES ('12345/2026', 'GARCIA C/ EMPRESA XYZ S/ DESPIDO', 'EN TRÁMITE', 'Audiencia preliminar', '2026-08-15', 1);
+INSERT INTO expedientes (numero, caratula, estado, etapa, fecha, cliente_id) VALUES ('98765/2025', 'LOPEZ C/ ART SANITARIOS S/ ACCIDENTE', 'SENTENCIA FAVORABLE', 'Ejecución', '2025-11-10', 2);
+
+-- 8. Insertar datos de ejemplo en consultas
+INSERT INTO consultas (nombre, email, celular, tipo_consulta, mensaje) VALUES ('Carlos Pérez', 'carlos@email.com', '11-1111-2222', 'Despido sin causa', 'Me despidieron sin aviso previo después de 5 años');
+INSERT INTO consultas (nombre, email, celular, tipo_consulta, mensaje) VALUES ('Ana Rodríguez', 'ana@email.com', '11-3333-4444', 'Accidente de trabajo', 'Tuve un accidente in itinere y la ART no responde');
+
+-- 9. Verificar datos
+SELECT * FROM clientes;
+SELECT * FROM expedientes;
+SELECT * FROM consultas;`;
+}
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderTree();
+  loadTemplate(); // Cargar plantilla por defecto
+});
+
+// Ctrl+Enter para ejecutar
+document.getElementById('queryInput').addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'Enter') {
+    e.preventDefault();
+    executeQuery();
+  }
+});
+</script>
+
+</body>
+</html>
