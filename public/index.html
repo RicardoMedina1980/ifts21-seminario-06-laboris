@@ -1,7 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Laboris | Estudio Jurídico Laboral</title>
   <meta name="description" content="Laboris: estudio jurídico especializado en derecho laboral y accidentes de trabajo.">
@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
+  
 <body>
   <a class="la-skip-link" href="#contenido">Saltar al contenido</a>
   <nav class="navbar navbar-expand-lg fixed-top la-navbar" id="siteNav">
@@ -136,7 +137,6 @@
               <div class="la-consulta-form">
                 <input class="form-control la-input" id="expedienteInput" type="text" placeholder="Ej: 12345/2026" maxlength="12" aria-label="Número de expediente">
                 <button class="btn la-btn la-btn-primary" id="consultarBtn" type="button">
-                  <!-- [ZOE - Sprint 3 - Día 1] Nuevos aportes de Zoe: Estructura para Spinner de carga -->
                   <span class="la-btn-text"><i class="bi bi-search"></i> Consultar</span>
                   <div class="la-spinner la-spinner-sm" id="spinnerConsulta" style="display:none;"></div>
                 </button>
@@ -198,7 +198,6 @@
                 <div class="invalid-feedback"></div>
               </div>
               <button class="btn la-btn la-btn-primary w-100" id="btnEnviarConsulta" type="submit" disabled>
-                <!-- [ZOE - Sprint 3 - Día 1] Nuevos aportes de Zoe: Estructura para Spinner en botón -->
                 <span class="la-btn-text">Enviar consulta <i class="bi bi-arrow-right"></i></span>
                 <div class="la-spinner la-spinner-sm" id="spinnerEnvio" style="display:none;"></div>
               </button>
@@ -209,7 +208,6 @@
       </div>
     </section>
 
-    <!-- [JOSÉ - Sprint 3 - Día 2] Nuevos aportes de José: Vista de Admin/Testing Oculta -->
     <section id="adminView" class="la-admin-view" style="display:none;">
       <div class="container">
         <div class="row">
@@ -252,5 +250,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/main.js"></script>
+
+  <!-- Enlace flotante al simulador de base de datos -->
+  <a href="admin.html" style="position:fixed; bottom:20px; right:20px; background:#0f3460; color:#00ff88; padding:10px 15px; text-decoration:none; font-family:monospace; border-radius:5px; font-size:13px; z-index:9999; border:1px solid #00ff88; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">🗄️ Ver Base de Datos</a>
+
 </body>
 </html>
+  
