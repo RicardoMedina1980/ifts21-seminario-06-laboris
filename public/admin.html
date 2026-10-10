@@ -13,14 +13,23 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1e1e1e; color: 
 .topbar .back-btn { margin-left: auto; color: #9cdcfe; text-decoration: none; font-size: 12px; }
 .topbar .back-btn:hover { text-decoration: underline; }
 .main { display: flex; flex: 1; overflow: hidden; }
-.sidebar { width: 260px; background: #252526; border-right: 1px solid #3e3e42; overflow-y: auto; padding: 8px 0; }
-.sidebar-title { color: #cccccc; font-size: 11px; text-transform: uppercase; padding: 8px 12px; font-weight: bold; letter-spacing: 0.5px; }
-.tree-item { padding: 4px 12px 4px 20px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-.tree-item:hover { background: #2a2d2e; }
-.tree-db { color: #4ec9b0; font-weight: bold; padding-left: 12px; }
-.tree-table { color: #dcdcaa; padding-left: 28px; }
-.tree-column { color: #9cdcfe; padding-left: 44px; font-size: 12px; }
-.tree-column .type { color: #569cd6; margin-left: 4px; font-size: 11px; }
+
+/* PANEL IZQUIERDO: LOG DE EVENTOS */
+.sidebar { width: 300px; background: #252526; border-right: 1px solid #3e3e42; display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-header { background: #2d2d30; padding: 8px 12px; border-bottom: 1px solid #3e3e42; display: flex; justify-content: space-between; align-items: center; }
+.sidebar-title { color: #cccccc; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
+.btn-clear-log { background: transparent; color: #858585; border: 1px solid #3e3e42; padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; }
+.btn-clear-log:hover { background: #3e3e42; color: #fff; }
+.event-log { flex: 1; overflow-y: auto; padding: 8px 0; }
+.event-item { padding: 6px 12px; border-left: 3px solid #007acc; margin-bottom: 4px; font-size: 12px; background: #1e1e1e; }
+.event-item.success { border-left-color: #4ec9b0; }
+.event-item.error { border-left-color: #f44747; }
+.event-item.info { border-left-color: #569cd6; }
+.event-item .time { color: #858585; font-size: 10px; }
+.event-item .msg { color: #d4d4d4; margin-top: 2px; font-family: 'Consolas', monospace; }
+.event-empty { color: #858585; font-size: 12px; padding: 20px 12px; text-align: center; font-style: italic; }
+
+/* PANEL CENTRAL */
 .center { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .query-editor { flex: 1; display: flex; flex-direction: column; border-bottom: 1px solid #3e3e42; min-height: 200px; }
 .query-toolbar { background: #2d2d30; padding: 6px 10px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #3e3e42; }
@@ -44,15 +53,6 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1e1e1e; color: 
 .result-table th { background: #2d2d30; color: #4ec9b0; padding: 6px 10px; text-align: left; border: 1px solid #3e3e42; font-weight: bold; }
 .result-table td { padding: 5px 10px; border: 1px solid #3e3e42; color: #d4d4d4; }
 .result-table tr:nth-child(even) td { background: #252526; }
-.history-panel { width: 280px; background: #252526; border-left: 1px solid #3e3e42; overflow-y: auto; display: flex; flex-direction: column; }
-.history-title { color: #cccccc; font-size: 11px; text-transform: uppercase; padding: 8px 12px; font-weight: bold; border-bottom: 1px solid #3e3e42; }
-.history-item { padding: 8px 12px; border-bottom: 1px solid #2d2d30; cursor: pointer; font-size: 12px; }
-.history-item:hover { background: #2a2d2e; }
-.history-item .time { color: #858585; font-size: 10px; }
-.history-item .query-text { color: #9cdcfe; margin-top: 3px; font-family: 'Consolas', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.history-item .status-ok { color: #4ec9b0; font-size: 10px; }
-.history-item .status-err { color: #f44747; font-size: 10px; }
-.history-empty { color: #858585; font-size: 12px; padding: 20px 12px; text-align: center; }
 .statusbar { background: #007acc; color: white; padding: 3px 12px; font-size: 11px; display: flex; justify-content: space-between; }
 .statusbar .status-left { display: flex; gap: 15px; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -70,9 +70,15 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1e1e1e; color: 
 </div>
 
 <div class="main">
+  <!-- PANEL IZQUIERDO: LOG DE EVENTOS -->
   <div class="sidebar">
-    <div class="sidebar-title">📂 Esquemas</div>
-    <div id="schemaTree"><div class="tree-item" style="color:#858585; padding-left:12px;">Esperando CREATE DATABASE...</div></div>
+    <div class="sidebar-header">
+      <span class="sidebar-title">📋 Log de Eventos</span>
+      <button class="btn-clear-log" onclick="clearLog()">Limpiar</button>
+    </div>
+    <div class="event-log" id="eventLog">
+      <div class="event-empty">Esperando primera ejecución...</div>
+    </div>
   </div>
 
   <div class="center">
@@ -95,11 +101,6 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1e1e1e; color: 
       </div>
     </div>
   </div>
-
-  <div class="history-panel">
-    <div class="history-title">📜 Historial de Queries</div>
-    <div id="historyList"><div class="history-empty">Sin queries ejecutadas</div></div>
-  </div>
 </div>
 
 <div class="statusbar">
@@ -107,7 +108,7 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1e1e1e; color: 
     <span id="statusMsg">Listo</span>
     <span id="rowCount"></span>
   </div>
-  <span>MySQL Simulator v1.0 · localStorage</span>
+  <span>MySQL Simulator v1.2 · localStorage</span>
 </div>
 
 <script>
@@ -115,6 +116,7 @@ const DB_KEY = 'laboris_db_schema';
 let schema = { databases: {} };
 let history = [];
 let currentDb = null;
+let events = [];
 
 function loadSchema() {
   const saved = localStorage.getItem(DB_KEY);
@@ -131,68 +133,99 @@ function getTableData(tableName) { return schema.databases[currentDb].tables[tab
 function setTableData(tableName, data) { schema.databases[currentDb].tables[tableName].data = data; saveSchema(); }
 function nextId(tableName) { const data = getTableData(tableName); return data.length > 0 ? Math.max(...data.map(r => r.id)) + 1 : 1; }
 
-function renderTree() {
-  const tree = document.getElementById('schemaTree');
-  tree.innerHTML = '';
-  if (Object.keys(schema.databases).length === 0) {
-    tree.innerHTML = '<div class="tree-item" style="color:#858585; padding-left:12px;">Esperando CREATE DATABASE...</div>';
+function addEvent(msg, type = 'info') {
+  const time = new Date().toLocaleTimeString();
+  events.unshift({ time, msg, type });
+  if (events.length > 100) events.pop();
+  renderEvents();
+}
+
+function renderEvents() {
+  const log = document.getElementById('eventLog');
+  if (events.length === 0) {
+    log.innerHTML = '<div class="event-empty">Esperando primera ejecución...</div>';
     return;
   }
-  Object.keys(schema.databases).forEach(dbName => {
-    const db = schema.databases[dbName];
-    const dbEl = document.createElement('div');
-    dbEl.className = 'tree-item tree-db';
-    dbEl.innerHTML = `<span class="icon">🗄️</span> ${dbName}`;
-    tree.appendChild(dbEl);
-    Object.keys(db.tables).forEach(tableName => {
-      const table = db.tables[tableName];
-      const tableEl = document.createElement('div');
-      tableEl.className = 'tree-item tree-table';
-      tableEl.innerHTML = `<span class="icon"></span> ${tableName} <span style="color:#858585;font-size:11px;">(${table.data.length})</span>`;
-      tableEl.onclick = () => { document.getElementById('queryInput').value = `SELECT * FROM ${tableName};`; executeQuery(); };
-      tree.appendChild(tableEl);
-      table.columns.forEach(col => {
-        const colEl = document.createElement('div');
-        colEl.className = 'tree-item tree-column';
-        let flags = [];
-        if (col.primaryKey) flags.push('PK');
-        if (col.notNull) flags.push('NN');
-        if (col.autoIncrement) flags.push('AI');
-        colEl.innerHTML = `<span class="icon"></span> ${col.name} <span class="type">${col.type}</span> <span style="color:#858585;font-size:10px;">${flags.join(' ')}</span>`;
-        tree.appendChild(colEl);
-      });
-    });
-  });
+  log.innerHTML = events.map(e => `
+    <div class="event-item ${e.type}">
+      <div class="time">${e.time}</div>
+      <div class="msg">${e.msg}</div>
+    </div>
+  `).join('');
+}
+
+function clearLog() {
+  events = [];
+  renderEvents();
 }
 
 function executeQuery() {
-  const query = document.getElementById('queryInput').value.trim();
-  if (!query) { showStatus('Query vacía', 'error'); return; }
-  const startTime = Date.now();
-  let result, status, message;
-  try {
-    const upper = query.toUpperCase();
-    if (upper.startsWith('CREATE DATABASE')) { result = handleCreateDatabase(query); status = 'ok'; message = result; }
-    else if (upper.startsWith('CREATE TABLE')) { result = handleCreateTable(query); status = 'ok'; message = result; }
-    else if (upper.startsWith('INSERT INTO')) { result = handleInsert(query); status = 'ok'; message = result; }
-    else if (upper.startsWith('SELECT')) { result = handleSelect(query); status = 'ok'; message = `${result.data.length} row(s) returned`; showResults(result.data, result.columns, message); }
-    else if (upper.startsWith('DROP TABLE')) { result = handleDropTable(query); status = 'ok'; message = result; }
-    else if (upper.startsWith('DROP DATABASE')) { result = handleDropDatabase(query); status = 'ok'; message = result; }
-    else if (upper.startsWith('USE ')) {
-      const dbName = query.split(/\s+/)[1].replace(';', '');
-      if (schema.databases[dbName]) { currentDb = dbName; document.getElementById('currentDbName').textContent = dbName; message = `Database changed to '${dbName}'`; status = 'ok'; }
-      else throw new Error(`Unknown database '${dbName}'`);
+  let rawQuery = document.getElementById('queryInput').value.trim();
+  if (!rawQuery) { showStatus('Query vacía', 'error'); return; }
+
+  let cleanQuery = rawQuery.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  const statements = cleanQuery.split(';').map(s => s.trim()).filter(s => s.length > 0);
+  
+  let successCount = 0;
+  let lastMessage = '';
+  let hasError = false;
+  let lastSelectResult = null;
+
+  for (let stmt of statements) {
+    const upper = stmt.toUpperCase();
+    try {
+      if (upper.startsWith('CREATE DATABASE')) { 
+        lastMessage = handleCreateDatabase(stmt); 
+        addEvent(lastMessage, 'success');
+      } else if (upper.startsWith('CREATE TABLE')) { 
+        lastMessage = handleCreateTable(stmt); 
+        addEvent(lastMessage, 'success');
+      } else if (upper.startsWith('INSERT INTO')) { 
+        lastMessage = handleInsert(stmt); 
+        addEvent(lastMessage, 'success');
+      } else if (upper.startsWith('SELECT')) { 
+        lastSelectResult = handleSelect(stmt); 
+        lastMessage = `${lastSelectResult.data.length} row(s) returned from '${stmt.match(/FROM\s+(\w+)/i)[1]}'`; 
+        addEvent(`SELECT: ${lastMessage}`, 'info');
+      } else if (upper.startsWith('DROP TABLE')) { 
+        lastMessage = handleDropTable(stmt); 
+        addEvent(lastMessage, 'success');
+      } else if (upper.startsWith('DROP DATABASE')) { 
+        lastMessage = handleDropDatabase(stmt); 
+        addEvent(lastMessage, 'success');
+      } else if (upper.startsWith('USE ')) { 
+        const dbName = stmt.split(/\s+/)[1];
+        if (schema.databases[dbName]) { 
+          currentDb = dbName; 
+          document.getElementById('currentDbName').textContent = dbName; 
+          lastMessage = `Database changed to '${dbName}'`; 
+          addEvent(lastMessage, 'info');
+        } else throw new Error(`Unknown database '${dbName}'`);
+      } else {
+        throw new Error('Comando no reconocido: ' + stmt.substring(0, 30) + '...');
+      }
+      successCount++;
+    } catch (err) {
+      hasError = true;
+      lastMessage = err.message;
+      addEvent(`ERROR: ${err.message}`, 'error');
+      break;
     }
-    else throw new Error('Comando SQL no soportado en este simulador');
-    const elapsed = Date.now() - startTime;
-    showStatus(`${message} (${elapsed}ms)`, 'success');
-    addToHistory(query, status, message);
-  } catch (err) {
-    showStatus(`Error: ${err.message}`, 'error');
-    document.getElementById('resultsContent').innerHTML = `<div id="resultsOutput" class="error">❌ Error: ${err.message}</div>`;
-    addToHistory(query, 'error', err.message);
   }
-  renderTree();
+
+  if (!hasError) {
+    showStatus(`${successCount} statement(s) executed successfully`, 'success');
+    addToHistory(rawQuery, 'ok', `${successCount} statement(s) executed`);
+    if (lastSelectResult) {
+      showResults(lastSelectResult.data, lastSelectResult.columns, `SELECT executed`);
+    } else {
+      document.getElementById('resultsContent').innerHTML = `<div id="resultsOutput" class="success">✅ ${lastMessage}</div>`;
+    }
+  } else {
+    showStatus(`Error: ${lastMessage}`, 'error');
+    document.getElementById('resultsContent').innerHTML = `<div id="resultsOutput" class="error">❌ Error: ${lastMessage}</div>`;
+    addToHistory(rawQuery, 'error', lastMessage);
+  }
 }
 
 function handleCreateDatabase(query) {
@@ -225,7 +258,7 @@ function handleCreateTable(query) {
   });
   schema.databases[currentDb].tables[tableName] = { columns, data: [] };
   saveSchema();
-  return `Table '${tableName}' created successfully with ${columns.length} column(s)`;
+  return `Table '${tableName}' created with ${columns.length} columns`;
 }
 
 function handleInsert(query) {
@@ -251,7 +284,7 @@ function handleInsert(query) {
   const data = getTableData(tableName);
   data.push(row);
   setTableData(tableName, data);
-  return `1 row(s) inserted into '${tableName}'`;
+  return `1 row inserted into '${tableName}' (id: ${row.id || 'auto'})`;
 }
 
 function handleSelect(query) {
@@ -328,9 +361,9 @@ function addToHistory(query, status, message) {
 }
 
 function renderHistory() {
-  const list = document.getElementById('historyList');
-  if (history.length === 0) { list.innerHTML = '<div class="history-empty">Sin queries ejecutadas</div>'; return; }
-  list.innerHTML = history.map((h, i) => `<div class="history-item" onclick="document.getElementById('queryInput').value=history[${i}].query"><div class="time">${h.time} · <span class="${h.status === 'ok' ? 'status-ok' : 'status-err'}">${h.status === 'ok' ? '✓ OK' : '✗ Error'}</span></div><div class="query-text">${h.query}</div></div>`).join('');
+  const list = document.getElementById('resultsContent');
+  if (history.length === 0) { list.innerHTML = '<div class="event-empty">Sin queries ejecutadas</div>'; return; }
+  list.innerHTML = history.map((h, i) => `<div class="event-item ${h.status === 'ok' ? 'success' : 'error'}" onclick="document.getElementById('queryInput').value=history[${i}].query" style="cursor:pointer;border-bottom:1px solid #3e3e42;"><div class="time">${h.time} · <span style="color:${h.status === 'ok' ? '#4ec9b0' : '#f44747'}">${h.status === 'ok' ? '✓ OK' : '✗ Error'}</span></div><div class="msg">${h.query}</div><div style="color:#858585;font-size:10px;margin-top:2px;">${h.message}</div></div>`).join('');
 }
 
 function clearEditor() { document.getElementById('queryInput').value = ''; document.getElementById('queryInput').focus(); }
@@ -340,11 +373,13 @@ function switchTab(tab, el) {
   el.classList.add('active');
   const content = document.getElementById('resultsContent');
   if (tab === 'history') {
-    content.innerHTML = history.length === 0 ? '<div class="history-empty">Sin queries ejecutadas</div>' : history.map((h, i) => `<div class="history-item" onclick="document.getElementById('queryInput').value=history[${i}].query" style="border-bottom:1px solid #3e3e42;"><div class="time">${h.time} · <span class="${h.status === 'ok' ? 'status-ok' : 'status-err'}">${h.status === 'ok' ? '✓ OK' : '✗ Error'}</span></div><div class="query-text">${h.query}</div><div style="color:#858585;font-size:11px;margin-top:2px;">${h.message}</div></div>`).join('');
+    renderHistory();
+  } else {
+    content.innerHTML = '<div id="resultsOutput" class="info">Ejecutá un SELECT para ver resultados acá.</div>';
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => { loadSchema(); renderTree(); });
+document.addEventListener('DOMContentLoaded', () => { loadSchema(); });
 document.getElementById('queryInput').addEventListener('keydown', (e) => { if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); executeQuery(); } });
 </script>
 </body>
