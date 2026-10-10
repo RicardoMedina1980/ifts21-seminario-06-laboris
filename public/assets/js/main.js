@@ -6,6 +6,8 @@
 "use strict";
 
 document.getElementById('year').textContent = new Date().getFullYear();
+const SUPABASE_URL = 'https://daolbevifbtgsfturvax.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fzbbIKgPXWTFCGtPkFO9vA_B7Ac-dR3';
 
 // ─── 1. LÓGICA DEL TOGGLE DE TEMA ────────────────────────────
 const btnToggle = document.getElementById('btnToggleTema');
