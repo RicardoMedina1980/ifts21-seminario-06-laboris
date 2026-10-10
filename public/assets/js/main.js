@@ -1,13 +1,71 @@
-// ============================================================
-// LABORIS — main.js
-// [JOSÉ] Implementación: Toggle, Validación, Fetch Simulado y LocalStorage
-// ============================================================
-
 "use strict";
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// ─── 1. LÓGICA DEL TOGGLE DE TEMA ────────────────────────────
+// ============================================
+// VINCULACIÓN CON SIMULADOR SQL
+// Escribe directamente en laboris_db_schema
+// ============================================
+const DB_KEY = 'laboris_db_schema';
+
+function getDBSchema() {
+  const saved = localStorage.getItem(DB_KEY);
+  if (saved) return JSON.parse(saved);
+  return null;
+}
+
+function saveDBSchema(schema) {
+  localStorage.setItem(DB_KEY, JSON.stringify(schema));
+}
+
+function guardarEnSimulador(nombre, email, celular, tipo_consulta, mensaje) {
+  const schema = getDBSchema();
+  if (!schema) return; // Si no existe la BD, no hace nada (el usuario debe crearla primero)
+
+  const db = schema.databases?.laboris_db;
+  if (!db || !db.tables?.consultas) return;
+
+  const tabla = db.tables.consultas;
+
+  // Calcular próximo ID (AUTO_INCREMENT)
+  const maxId = tabla.data.length > 0 ? Math.max(...tabla.data.map(r => r.id || 0)) : 0;
+  const nuevoId = maxId + 1;
+
+  // Crear el registro con la misma estructura que el simulador
+  const nuevoRegistro = {
+    id: nuevoId,
+    nombre: nombre,
+    email: email,
+    celular: celular,
+    tipo_consulta: tipo_consulta,
+    mensaje: mensaje,
+    fecha_envio: new Date().toISOString().replace('T', ' ').substring(0, 19)
+  };
+
+  tabla.data.push(nuevoRegistro);
+  saveDBSchema(schema);
+
+  // También registrar como cliente si no existe
+  if (db.tables.clientes) {
+    const clientes = db.tables.clientes.data;
+    const yaExiste = clientes.find(c => c.email === email);
+    if (!yaExiste) {
+      const maxCliId = clientes.length > 0 ? Math.max(...clientes.map(c => c.id || 0)) : 0;
+      clientes.push({
+        id: maxCliId + 1,
+        nombre: nombre,
+        email: email,
+        celular: celular,
+        fecha_registro: new Date().toISOString().replace('T', ' ').substring(0, 19)
+      });
+      saveDBSchema(schema);
+    }
+  }
+
+  console.log('✅ Consulta guardada en simulador SQL (id: ' + nuevoId + ')');
+}
+
+// ─ 1. TOGGLE DE TEMA ──────────────────────────────────────
 const btnToggle = document.getElementById('btnToggleTema');
 const iconoTema = document.getElementById('iconoTema');
 
@@ -32,7 +90,7 @@ btnToggle?.addEventListener('click', () => {
   actualizarIcono(newTheme);
 });
 
-// ─── 2. VALIDACIÓN EN TIEMPO REAL DEL FORMULARIO ─────────────
+// ── 2. VALIDACIÓN FORMULARIO ────────────────────────────────
 const campos = ['nombre', 'email', 'celular', 'tipoConsulta', 'descripcion'];
 const mensajesError = {
   nombre: 'El nombre es obligatorio y debe tener al menos 3 caracteres.',
@@ -102,21 +160,20 @@ const observer = new IntersectionObserver((entries) => {
 }, { root: null, rootMargin: '-25% 0px -65% 0px', threshold: 0 });
 sections.forEach(s => observer.observe(s));
 
-// ─── 4. CONSULTA DE EXPEDIENTE (Sprint 3: Simulación Async) ──
+// ─── 4. CONSULTA DE EXPEDIENTE (Simulación) ──────────────────
 const expedienteInput = document.getElementById('expedienteInput');
 const consultarBtn = document.getElementById('consultarBtn');
 const consultaResultado = document.getElementById('consultaResultado');
 const spinnerConsulta = document.getElementById('spinnerConsulta');
-const btnTextConsulta = consultarBtn.querySelector('.la-btn-text');
+const btnTextConsulta = consultarBtn?.querySelector('.la-btn-text');
 
-// [JOSÉ - Sprint 3 - Día 2] Nuevos aportes de José: Simulación Async/Await
 const DEMO_EXPEDIENTES = {
   '12345/2026': { estado: 'EN TRÁMITE', etapa: 'Audiencia preliminar', ultima: 'Notificación enviada.', fecha: '18/08/2026' },
   '98765/2025': { estado: 'SENTENCIA FAVORABLE', etapa: 'Ejecución', ultima: 'Pago ordenado.', fecha: '10/08/2026' }
 };
 
 async function mockFetchExpediente(numero) {
-  await new Promise(resolve => setTimeout(resolve, 1500)); // Latencia simulada
+  await new Promise(resolve => setTimeout(resolve, 1500));
   return DEMO_EXPEDIENTES[numero] || null;
 }
 
@@ -129,7 +186,6 @@ consultarBtn?.addEventListener('click', async () => {
     return;
   }
 
-  // [ZOE - Sprint 3 - Día 1] Estado de carga
   consultaResultado.innerHTML = '';
   spinnerConsulta.style.display = 'inline-block';
   btnTextConsulta.style.display = 'none';
@@ -157,14 +213,13 @@ consultarBtn?.addEventListener('click', async () => {
 
 expedienteInput?.addEventListener('keydown', e => { if (e.key === 'Enter') consultarBtn.click(); });
 
-// ─── 5. FORMULARIO DE CONTACTO Y LOCALSTORAGE (Sprint 3) ─────
+// ─── 5. FORMULARIO DE CONTACTO → GUARDA EN SIMULADOR SQL ─────
 const contactForm = document.getElementById('contactForm');
 const btnEnviarConsulta = document.getElementById('btnEnviarConsulta');
 const spinnerEnvio = document.getElementById('spinnerEnvio');
-const btnTextEnvio = btnEnviarConsulta.querySelector('.la-btn-text');
+const btnTextEnvio = btnEnviarConsulta?.querySelector('.la-btn-text');
 const formMessage = document.getElementById('formMessage');
 
-// [JOSÉ - Sprint 3 - Día 2] Nuevos aportes de José: Persistencia en LocalStorage
 contactForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   
@@ -172,22 +227,17 @@ contactForm?.addEventListener('submit', async (e) => {
   btnTextEnvio.style.display = 'none';
   btnEnviarConsulta.disabled = true;
 
-  const nuevaConsulta = {
-    id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-    fecha: new Date().toISOString(),
-    nombre: document.getElementById('nombre').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    celular: document.getElementById('celular').value.trim(),
-    tipo: document.getElementById('tipoConsulta').value,
-    mensaje: document.getElementById('descripcion').value.trim()
-  };
+  const nombre = document.getElementById('nombre').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const celular = document.getElementById('celular').value.trim();
+  const tipo = document.getElementById('tipoConsulta').value;
+  const mensaje = document.getElementById('descripcion').value.trim();
 
   try {
-    // Simulación de envío y guardado local
     await new Promise(resolve => setTimeout(resolve, 1500));
-    const consultas = JSON.parse(localStorage.getItem('laboris_consultas') || '[]');
-    consultas.push(nuevaConsulta);
-    localStorage.setItem('laboris_consultas', JSON.stringify(consultas));
+    
+    // 🔗 VINCULACIÓN: Guardar en el simulador SQL
+    guardarEnSimulador(nombre, email, celular, tipo, mensaje);
 
     formMessage.textContent = '¡Consulta enviada con éxito! Nos pondremos en contacto pronto.';
     formMessage.style.color = 'var(--la-gold)';
@@ -196,7 +246,8 @@ contactForm?.addEventListener('submit', async (e) => {
       const el = document.getElementById(id);
       el.classList.remove('is-valid', 'is-invalid');
     });
-    renderAdminView(); 
+    actualizarBotonEnviar();
+    
   } catch (error) {
     formMessage.textContent = 'No pudimos conectar. Verificá tu conexión a internet.';
     formMessage.style.color = '#dc3545';
@@ -208,13 +259,12 @@ contactForm?.addEventListener('submit', async (e) => {
   }
 });
 
-// ─── 6. VISTA DE ADMIN/TESTING (Sprint 3) ────────────────────
+// ─── 6. VISTA ADMIN/TESTING (oculta, doble clic en año) ──────
 const adminView = document.getElementById('adminView');
 const adminTableBody = document.getElementById('adminTableBody');
 const btnLimpiarAdmin = document.getElementById('btnLimpiarAdmin');
 const footerYear = document.getElementById('year');
 
-// Atajo secreto: Doble clic en el año del footer para abrir/cerrar admin
 footerYear?.addEventListener('dblclick', () => {
   const isVisible = adminView.style.display !== 'none';
   adminView.style.display = isVisible ? 'none' : 'block';
@@ -223,23 +273,30 @@ footerYear?.addEventListener('dblclick', () => {
 });
 
 function renderAdminView() {
-  const consultas = JSON.parse(localStorage.getItem('laboris_consultas') || '[]');
+  const schema = getDBSchema();
+  if (!adminTableBody) return;
   adminTableBody.innerHTML = '';
   
+  if (!schema?.databases?.laboris_db?.tables?.consultas) {
+    adminTableBody.innerHTML = '<tr><td colspan="6" class="text-center">La base de datos aún no fue creada. Andá a admin.html para inicializarla.</td></tr>';
+    return;
+  }
+  
+  const consultas = schema.databases.laboris_db.tables.consultas.data;
+  
   if (consultas.length === 0) {
-    adminTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay consultas de prueba aún.</td></tr>';
+    adminTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay consultas aún.</td></tr>';
     return;
   }
 
-  consultas.reverse().forEach(c => {
-    const fecha = new Date(c.fecha).toLocaleString('es-AR');
+  consultas.slice().reverse().forEach(c => {
     adminTableBody.innerHTML += `
       <tr>
-        <td><small>${c.id.substr(0,8)}</small></td>
-        <td><small>${fecha}</small></td>
+        <td><small>${c.id}</small></td>
+        <td><small>${c.fecha_envio}</small></td>
         <td>${c.nombre}</td>
         <td>${c.email}</td>
-        <td>${c.tipo}</td>
+        <td>${c.tipo_consulta}</td>
         <td><small>${c.mensaje}</small></td>
       </tr>
     `;
@@ -247,8 +304,12 @@ function renderAdminView() {
 }
 
 btnLimpiarAdmin?.addEventListener('click', () => {
-  if(confirm('¿Borrar todas las consultas de prueba del localStorage?')) {
-    localStorage.removeItem('laboris_consultas');
+  if(confirm('¿Borrar todas las consultas de la base de datos?')) {
+    const schema = getDBSchema();
+    if (schema?.databases?.laboris_db?.tables?.consultas) {
+      schema.databases.laboris_db.tables.consultas.data = [];
+      saveDBSchema(schema);
+    }
     renderAdminView();
   }
 });
