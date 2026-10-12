@@ -1,142 +1,248 @@
 /* ============================================================
-   LABORIS — styles.css
-   [ZOE] Refactorización: Variables CSS y Dark Mode (Sprint 2)
+   LABORIS - Hoja de estilos principal
+   Proyecto: Seminario de Actualización en Tecnología Web
+   Institución: IFTS N° 21
+   ============================================================
+   Sprint 1 (01/09/2026) - José: variables CSS base y tipografía
+   Sprint 2 (22/09/2026) - Zoe: modo oscuro con [data-theme="dark"]
+   Sprint 4 (12/10/2026) - Zoe: imagen de fondo hero + overlay
    ============================================================ */
+
 :root {
-  --la-bg: #F8F5F0; --la-surface: #FFFFFF; --la-text-primary: #1A1A1A;
-  --la-text-secondary: #6B6560; --la-red: #8B2635; --la-red-hover: #A83040;
-  --la-gold: #C9973A; --la-line: #E5DDD6; --la-nav-h: 78px;
+  /* Paleta Laboris - Sprint 1 (José) */
+  --primary: #0f3460;
+  --gold: #c9a961;
+  --dark: #1a1a2e;
+
+  /* Variables de tema claro (por defecto) - Sprint 2 (Zoe) */
+  --bg-body: #ffffff;
+  --text-main: #333333;
+  --bg-card: #ffffff;
+  --bg-nav: rgba(255, 255, 255, 0.95);
+  --bg-input: #ffffff;
+  --border-input: #dddddd;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
 }
-[data-theme="dark"] {
-  --la-bg: #121214; --la-surface: #1A1A1C; --la-text-primary: #E0E0E0;
-  --la-text-secondary: #A0A0A0; --la-red: #A83040; --la-red-hover: #C43A4D;
-  --la-gold: #D4AF37; --la-line: #333333;
-}
-html { scroll-behavior: smooth; scroll-padding-top: var(--la-nav-h); }
-body { font-family: "Source Sans 3", sans-serif; color: var(--la-text-primary); background: var(--la-bg); line-height: 1.65; font-size: 14px; }
-a { text-decoration: none; color: inherit; }
-.la-skip-link { position: fixed; left: 16px; top: -100px; z-index: 9999; background: var(--la-red); color: var(--la-surface); padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 14px; }
-.la-skip-link:focus { top: 16px; }
-.la-navbar { min-height: var(--la-nav-h); transition: background .3s, box-shadow .3s; }
-.la-navbar.scrolled { background: rgba(26,26,26,.96); backdrop-filter: blur(14px); box-shadow: 0 6px 28px rgba(0,0,0,.18); }
-[data-theme="dark"] .la-navbar.scrolled { background: rgba(18,18,20,.96); }
-.la-brand { display: inline-flex; align-items: center; gap: 10px; font-family: "Playfair Display", serif; font-weight: 700; color: var(--la-surface); }
-.la-brand > span { display: flex; flex-direction: column; line-height: 1.1; font-size: 14px; }
-.la-brand strong { color: var(--la-gold); font-size: 12px; letter-spacing: .08em; }
-.la-brand-mark { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(201,151,58,.5); border-radius: 6px; color: var(--la-gold); font-size: 14px; }
-.la-nav-link { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.75) !important; padding-left: 0 !important; padding-right: 0 !important; transition: color .2s; }
-.la-nav-link:hover, .la-nav-link.active { color: var(--la-surface) !important; }
-.la-nav-cta { font-size: 14px; font-weight: 700; color: var(--la-surface) !important; padding: 10px 16px !important; background: var(--la-red); border-radius: 8px; transition: background .2s; }
-.la-nav-cta:hover { background: var(--la-red-hover) !important; }
-.la-toggler { background: none; border: 0; box-shadow: none !important; padding: 4px; }
-.la-toggler span { display: block; width: 22px; height: 2px; background: var(--la-surface); margin: 5px 0; }
-@media (max-width: 991px) { .la-navbar .navbar-collapse { background: rgba(26,26,26,.98); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 12px; margin-top: 10px; } .la-nav-link, .la-nav-cta { padding: 12px !important; display: block; } }
-.la-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: var(--la-red); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 14px; }
-.la-eyebrow-light { color: rgba(201,151,58,.85); }
-.la-areas h2, .la-about h2, .la-consulta h2, .la-contact h2 { font-family: "Playfair Display", serif; font-weight: 700; font-size: clamp(32px, 5vw, 62px); line-height: 1.05; }
-.la-areas h2 span, .la-about h2 span, .la-consulta h2 span, .la-contact h2 span { color: var(--la-red); }
-.la-btn { min-height: 48px; padding: 0 22px; font-size: 14px; font-weight: 700; border-radius: 10px; border: 0; transition: transform .2s, background .2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
-.la-btn:hover { transform: translateY(-2px); }
-.la-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.la-btn-primary { background: var(--la-red); color: var(--la-surface); }
-.la-btn-primary:hover { background: var(--la-red-hover); color: var(--la-surface); }
-.la-btn-outline { border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.05); color: var(--la-surface); }
-.la-btn-outline:hover { background: rgba(255,255,255,.12); color: var(--la-surface); }
-.la-hero { min-height: 100svh; padding-bottom: 60px; position: relative; display: flex; align-items: center; color: var(--la-surface); }
-.la-hero-bg { position: absolute; inset: -4%; background: url("https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=2200&q=85") center / cover no-repeat; }
-.la-hero-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,6,4,.94) 0%, rgba(10,6,4,.72) 48%, rgba(10,6,4,.22) 100%), linear-gradient(0deg, rgba(10,6,4,.75), transparent 50%); }
-.la-hero-content { position: relative; z-index: 2; padding-top: calc(var(--la-nav-h) + 10px); }
-.la-hero h1 { font-family: "Playfair Display", serif; font-size: clamp(42px, 5.5vw, 76px); font-weight: 700; line-height: 1.05; margin-bottom: 22px; margin-top: 16px; }
-.la-hero h1 span { color: var(--la-gold); }
-.la-hero p { color: rgba(255,255,255,.75); font-size: 16px; max-width: 560px; }
-.la-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; margin-bottom: 50px; }
-.la-hero-stats { display: flex; gap: 44px; }
-.la-hero-stats div { display: flex; flex-direction: column; }
-.la-hero-stats strong { font-family: "Playfair Display", serif; font-size: 26px; font-weight: 700; }
-.la-hero-stats span { font-size: 12px; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .1em; margin-top: 3px; }
-.la-hero-card { padding: 26px; border-radius: 16px; background: rgba(18,10,8,.65); backdrop-filter: blur(14px); border-top: 3px solid var(--la-red); border: 1px solid rgba(255,255,255,.1); }
-.la-card-label { display: flex; align-items: center; gap: 7px; color: var(--la-gold); font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 18px; }
-.la-card-label i { font-size: 8px; }
-.la-hero-card strong { display: block; font-family: "Playfair Display", serif; font-size: 22px; line-height: 1.1; margin-bottom: 10px; }
-.la-hero-card p { color: rgba(255,255,255,.6); font-size: 14px; margin-bottom: 20px; }
-.la-hero-card a { display: inline-flex; align-items: center; gap: 7px; color: var(--la-red); font-size: 14px; font-weight: 700; }
-.la-card-divider { border-top: 1px solid rgba(255,255,255,.1); margin: 20px 0 14px; }
-.la-hero-card small { color: rgba(255,255,255,.4); font-size: 12px; }
-.la-section { padding: 105px 0; }
-.la-areas { background: var(--la-bg); }
-.la-areas p { color: var(--la-text-secondary); font-size: 14px; }
-.la-area-card { height: 100%; padding: 26px; border: 1px solid var(--la-line); border-radius: 18px; background: var(--la-surface); border-top: 3px solid transparent; transition: border-top-color .25s, transform .25s, box-shadow .25s; }
-.la-area-card:hover { border-top-color: var(--la-red); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(139,38,53,.08); }
-.la-area-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px; background: #FBF0F0; color: var(--la-red); font-size: 20px; margin-bottom: 18px; }
-.la-area-card h3 { font-family: "Playfair Display", serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
-.la-area-card p { color: var(--la-text-secondary); font-size: 14px; margin-bottom: 18px; }
-.la-area-card a { font-size: 14px; font-weight: 700; color: var(--la-red); }
-.la-consulta { padding: 100px 0; background: radial-gradient(circle at 20% 50%, rgba(139,38,53,.12), transparent 40%), var(--la-bg); color: var(--la-text-primary); }
-.la-consulta p { color: var(--la-text-secondary); font-size: 14px; max-width: 480px; }
-.la-consulta-box { padding: 32px; border-radius: 18px; background: var(--la-surface); border: 1px solid var(--la-line); }
-.la-consulta-icon { font-size: 28px; color: var(--la-gold); margin-bottom: 16px; }
-.la-consulta-box h3 { font-family: "Playfair Display", serif; font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-.la-consulta-box > p { color: var(--la-text-secondary); font-size: 12px; margin-bottom: 18px; }
-.la-consulta-form { display: flex; gap: 10px; }
-.la-input { background: var(--la-surface) !important; border-color: var(--la-line) !important; border-radius: 10px !important; color: var(--la-text-primary) !important; font-size: 14px !important; padding: 13px 14px !important; }
-.la-input::placeholder { color: var(--la-text-secondary) !important; }
-.la-input:focus { border-color: var(--la-gold) !important; box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25) !important; }
-.la-input.is-valid { border-color: #198754 !important; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important; background-repeat: no-repeat !important; background-position: right calc(0.375em + 0.1875rem) center !important; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important; }
-.la-input.is-invalid { border-color: #dc3545 !important; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important; background-repeat: no-repeat !important; background-position: right calc(0.375em + 0.1875rem) center !important; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important; }
-.invalid-feedback { display: none; width: 100%; margin-top: 0.25rem; font-size: 12px; color: #dc3545; }
-.was-validated .form-control:invalid ~ .invalid-feedback, .form-control.is-invalid ~ .invalid-feedback { display: block; }
-.la-label { font-size: 14px !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: .05em; color: var(--la-text-primary) !important; margin-bottom: 7px !important; }
-.form-text { font-size: 12px; color: var(--la-text-secondary); margin-top: 4px; }
-.la-footer { padding: 24px 0; background: var(--la-surface); border-top: 1px solid var(--la-line); }
-.la-footer p, .la-footer span { font-size: 12px; color: var(--la-text-secondary); }
-iframe[id^="netlify-"], .netlify-badge { display: none !important; }
 
 /* ============================================================
-   [ZOE - Sprint 3 - Día 1] Nuevos aportes de Zoe: Estados de Carga y Admin View
+   MODO OSCURO
+   Sprint 2 (22/09/2026) - Zoe: redefinición de variables
    ============================================================ */
+[data-theme="dark"] {
+  --bg-body: #1a1a2e;
+  --text-main: #f8f9fa;
+  --bg-card: #16213e;
+  --bg-nav: rgba(26, 26, 46, 0.95);
+  --bg-input: #0f3460;
+  --border-input: #2a2a4a;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
 
-/* Spinner Grande (Consulta de Expediente) */
-.la-spinner {
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-body);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1, h2, h3, .la-brand { font-family: 'Playfair Display', serif; }
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.la-navbar {
+  background: var(--bg-nav);
+  backdrop-filter: blur(10px);
+  padding: 15px 0;
+  z-index: 1000;
+  transition: 0.3s;
+}
+.la-brand { font-size: 1.3rem; color: var(--text-main); }
+[data-theme="dark"] .la-brand { color: #fff; }
+.la-brand strong { color: var(--gold); }
+.la-brand-mark {
+  background: var(--primary);
+  color: white;
   width: 40px; height: 40px;
-  border: 4px solid rgba(201, 151, 58, 0.2); /* Dorado transparente */
-  border-top-color: var(--la-gold);
   border-radius: 50%;
-  animation: la-spin 1s linear infinite;
-  margin: 20px auto;
+  display: flex; align-items: center; justify-content: center;
+  margin-right: 10px;
+}
+.la-nav-link { color: var(--text-main); font-weight: 600; }
+.la-nav-link:hover { color: var(--gold); }
+
+/* ============================================================
+   HERO / PORTADA
+   Sprint 4 (12/10/2026) - Zoe: imagen de fondo + overlay
+   ============================================================ */
+.la-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Imagen de portada: la Dama de la Justicia */
+  background-image: url('../img/justicia.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 150px 0 100px;
 }
 
-/* Spinner Chico (Dentro de botones) */
-.la-spinner-sm {
-  width: 18px; height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: la-spin 0.8s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 8px;
+.la-hero-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(15, 52, 96, 0.75) 0%, rgba(26, 26, 46, 0.85) 100%);
+  z-index: 1;
 }
 
-@keyframes la-spin {
-  to { transform: rotate(360deg); }
-}
+.la-hero-content { position: relative; z-index: 2; }
 
-/* Vista de Admin Oculta */
-.la-admin-view {
-  padding: 60px 0;
-  background: var(--la-bg);
-  border-top: 2px dashed var(--la-line);
+.la-eyebrow {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 15px;
 }
-.la-admin-view h3 {
-  font-family: "Playfair Display", serif;
-  color: var(--la-red);
+.la-hero h1 {
+  font-size: 3.5rem;
+  color: white;
+  line-height: 1.2;
   margin-bottom: 20px;
 }
+.la-hero h1 span { color: var(--gold); }
+.la-hero p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 30px;
+}
 
-@media (max-width: 767px) {
-  .la-section, .la-consulta { padding: 75px 0; }
-  .la-hero h1 { font-size: clamp(44px, 13vw, 66px); }
-  .la-hero-actions { flex-direction: column; }
-  .la-hero-actions .btn { width: 100%; }
-  .la-consulta-form { flex-direction: column; }
+/* ============================================================
+   BOTONES
+   Sprint 1 (José) + Sprint 2 (Zoe: hover states)
+   ============================================================ */
+.la-btn {
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: 0.3s;
+  border: none;
+}
+.la-btn-primary { background: var(--gold); color: var(--primary); }
+.la-btn-primary:hover { background: white; color: var(--primary); transform: translateY(-2px); }
+.la-btn-outline { background: transparent; border: 2px solid white; color: white; }
+.la-btn-outline:hover { background: white; color: var(--primary); }
+
+#btnToggleTema {
+  border: 1px solid var(--border-input);
+  color: var(--text-main);
+}
+
+/* ============================================================
+   SECCIONES Y CARDS
+   ============================================================ */
+.la-section { padding: 80px 0; }
+.la-areas {
+  background: var(--bg-body);
+  border-top: 1px solid var(--border-input);
+}
+.la-areas h2, .la-contact h2 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: 15px;
+}
+.la-areas h2 span, .la-contact h2 span { color: var(--gold); }
+
+.la-card {
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: 12px;
+  height: 100%;
+  border: 1px solid var(--border-input);
+  transition: 0.3s;
+  color: var(--text-main);
+}
+.la-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+  border-color: var(--gold);
+}
+.la-card-icon {
+  font-size: 2.5rem;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* ============================================================
+   CONTACTO
+   ============================================================ */
+.la-contact-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+  color: var(--text-main);
+}
+.la-contact-list li {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.la-contact-list i { color: var(--gold); }
+
+/* ============================================================
+   FORMULARIO
+   Sprint 2 (22/09/2026) - Zoe: estilos .la-input
+   ============================================================ */
+.la-form {
+  background: var(--bg-card);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.la-form .form-label { color: var(--text-main); font-weight: 600; }
+.la-input {
+  padding: 12px 15px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  background-color: var(--bg-input);
+  color: var(--text-main);
+  transition: 0.3s;
+}
+.la-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.2);
+  outline: none;
+}
+
+/* ============================================================
+   SPINNERS DE CARGA
+   Sprint 3 (05/10/2026) - Zoe: diseño visual
+   ============================================================ */
+.spinner-border { width: 1rem; height: 1rem; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.la-footer {
+  background: var(--dark);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .la-hero h1 { font-size: 2.2rem; }
+  .la-hero p { font-size: 1rem; }
+  .la-hero { background-attachment: scroll; }
 }
