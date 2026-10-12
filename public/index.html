@@ -4,251 +4,189 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Laboris | Estudio Jurídico Laboral</title>
-  <meta name="description" content="Laboris: estudio jurídico especializado en derecho laboral y accidentes de trabajo.">
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <meta name="description" content="Laboris: estudio jurídico especializado en derecho laboral y accidentes de trabajo. Proyecto educativo IFTS N° 21.">
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    const theme = localStorage.getItem('theme-preference') || 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 (CDN) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <!-- CSS personalizado del proyecto -->
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-  
 <body>
-  <a class="la-skip-link" href="#contenido">Saltar al contenido</a>
+
+  <!-- ============================================================
+       NAVBAR
+       Sprint 1 (01/09/2026) - José: estructura base con Bootstrap
+       Sprint 2 (22/09/2026) - Zoe: botón de modo oscuro
+       ============================================================ -->
   <nav class="navbar navbar-expand-lg fixed-top la-navbar" id="siteNav">
     <div class="container">
       <a class="navbar-brand la-brand" href="#inicio">
         <span class="la-brand-mark"><i class="bi bi-shield-fill"></i></span>
         <span>LABORIS<strong>&amp; ASOCIADOS</strong></span>
       </a>
-      <button class="navbar-toggler la-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Abrir menú">
-        <span></span><span></span><span></span>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks">
+        <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navLinks">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#inicio" data-section="inicio">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#areas" data-section="areas">Áreas</a></li>
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#consulta" data-section="consulta">Mi expediente</a></li>
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#honorarios" data-section="honorarios">Honorarios</a></li>
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#contacto" data-section="contacto">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link la-nav-link" href="#inicio">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link la-nav-link" href="#areas">Áreas</a></li>
+          <li class="nav-item"><a class="nav-link la-nav-link" href="#contacto">Contacto</a></li>
           <li class="nav-item">
+            <!-- Sprint 2 - Zoe: botón toggle modo oscuro -->
             <button class="btn la-btn la-btn-outline ms-lg-2" id="btnToggleTema" aria-label="Cambiar tema">
               <i class="bi bi-moon-stars-fill" id="iconoTema"></i>
             </button>
           </li>
-          <li class="nav-item"><a class="nav-link la-nav-cta" href="#consulta">Consultar expediente</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
   <main id="contenido">
+
+    <!-- ============================================================
+         HERO / PORTADA
+         Sprint 1 (01/09/2026) - José: estructura
+         Sprint 4 (12/10/2026) - Zoe: imagen de fondo + overlay
+         ============================================================ -->
     <section class="la-hero" id="inicio">
-      <div class="la-hero-bg" aria-hidden="true"></div>
-      <div class="la-hero-overlay" aria-hidden="true"></div>
+      <div class="la-hero-overlay"></div>
       <div class="container la-hero-content">
-        <div class="row align-items-end">
-          <div class="col-lg-7">
-            <span class="la-eyebrow la-eyebrow-light"><i class="bi bi-shield-fill"></i> Estudio Jurídico Laboral · Buenos Aires</span>
-            <h1>Cuando el trabajo<br>termina, empieza<br><span>nuestra tarea.</span></h1>
-            <p>Especialistas en derecho laboral, accidentes de trabajo y conflictos laborales. Defendemos tus derechos con experiencia y compromiso.</p>
+        <div class="row align-items-center">
+          <div class="col-lg-8 mx-auto text-center">
+            <span class="la-eyebrow">Estudio Jurídico Laboral · Buenos Aires</span>
+            <h1>Cuando el trabajo termina, empieza <span>nuestra tarea.</span></h1>
+            <p>Especialistas en derecho laboral, accidentes de trabajo y conflictos laborales. Defendemos tus derechos con experiencia.</p>
             <div class="la-hero-actions">
-              <a class="btn la-btn la-btn-primary" href="#consulta"><i class="bi bi-search"></i> Consultar mi expediente</a>
-              <a class="btn la-btn la-btn-outline" href="#areas">Conocé nuestras áreas <i class="bi bi-arrow-down"></i></a>
-            </div>
-            <div class="la-hero-stats">
-              <div><strong>+1.200</strong><span>Casos resueltos</span></div>
-              <div><strong>20 años</strong><span>De experiencia</span></div>
-              <div><strong>Sin pago</strong><span>Hasta ganar</span></div>
-            </div>
-          </div>
-          <div class="col-lg-5 d-none d-lg-block">
-            <div class="la-hero-card">
-              <span class="la-card-label"><i class="bi bi-circle-fill"></i> Atención permanente</span>
-              <strong>Consultá el estado<br>de tu expediente</strong>
-              <p>Sin cuenta, sin contraseña. Solo tu número de expediente.</p>
-              <a href="#consulta">Ir a la consulta <i class="bi bi-arrow-right"></i></a>
-              <div class="la-card-divider"></div>
-              <small>Primera consulta sin cargo</small>
+              <a class="btn la-btn la-btn-primary" href="#contacto">Consultar ahora</a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ============================================================
+         ÁREAS DE PRÁCTICA
+         Sprint 1 (01/09/2026) - José: cards con Bootstrap grid
+         ============================================================ -->
     <section class="la-section la-areas" id="areas">
       <div class="container">
-        <div class="row align-items-end mb-5">
-          <div class="col-lg-6">
-            <span class="la-eyebrow">Áreas de práctica</span>
-            <h2>Derecho laboral<br><span>en toda su extensión.</span></h2>
-          </div>
-          <div class="col-lg-6">
-            <p>Nos especializamos en la defensa del trabajador en todas las instancias del conflicto laboral.</p>
-          </div>
+        <div class="text-center mb-5">
+          <span class="la-eyebrow">Áreas de práctica</span>
+          <h2>Derecho laboral <span>en toda su extensión.</span></h2>
         </div>
-        <div class="row g-3">
-          <div class="col-lg-4 col-md-6">
-            <article class="la-area-card">
-              <div class="la-area-icon"><i class="bi bi-file-earmark-x"></i></div>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="la-card">
+              <i class="bi bi-file-earmark-x la-card-icon"></i>
               <h3>Despidos</h3>
-              <p>Despidos sin causa, con causa, indirectos y discriminatorios. Calculamos tu liquidación y reclamamos lo que te corresponde.</p>
-              <a href="#contacto">Consultar <i class="bi bi-arrow-up-right"></i></a>
-            </article>
+              <p>Despidos sin causa, con causa e indirectos. Calculamos tu liquidación.</p>
+            </div>
           </div>
-          <div class="col-lg-4 col-md-6">
-            <article class="la-area-card">
-              <div class="la-area-icon"><i class="bi bi-bandaid"></i></div>
-              <h3>Accidentes de trabajo</h3>
-              <p>Accidentes in itinere y en el lugar de trabajo. Reclamamos ante ART y empleadores, con asesoría médica coordinada.</p>
-              <a href="#contacto">Consultar <i class="bi bi-arrow-up-right"></i></a>
-            </article>
+          <div class="col-md-4">
+            <div class="la-card">
+              <i class="bi bi-bandaid la-card-icon"></i>
+              <h3>Accidentes</h3>
+              <p>Accidentes in itinere y laborales. Reclamamos ante ART y empleadores.</p>
+            </div>
           </div>
-          <div class="col-lg-4 col-md-6">
-            <article class="la-area-card">
-              <div class="la-area-icon"><i class="bi bi-cash-stack"></i></div>
-              <h3>Diferencias salariales</h3>
-              <p>Horas extras no pagas, bonos retenidos, sueldos informales y recategorización de tareas.</p>
-              <a href="#contacto">Consultar <i class="bi bi-arrow-up-right"></i></a>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="la-consulta" id="consulta">
-      <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6">
-            <span class="la-eyebrow la-eyebrow-light">Sin cuenta necesaria</span>
-            <h2>Estado de tu<br><span>expediente.</span></h2>
-            <p>Ingresá tu número de expediente y conocé en qué etapa está tu caso.</p>
-          </div>
-          <div class="col-lg-6">
-            <div class="la-consulta-box">
-              <div class="la-consulta-icon"><i class="bi bi-file-earmark-text"></i></div>
-              <h3>Consultar expediente</h3>
-              <p>Número de expediente (sin guiones ni espacios)</p>
-              <div class="la-consulta-form">
-                <input class="form-control la-input" id="expedienteInput" type="text" placeholder="Ej: 12345/2026" maxlength="12" aria-label="Número de expediente">
-                <button class="btn la-btn la-btn-primary" id="consultarBtn" type="button">
-                  <span class="la-btn-text"><i class="bi bi-search"></i> Consultar</span>
-                  <div class="la-spinner la-spinner-sm" id="spinnerConsulta" style="display:none;"></div>
-                </button>
-              </div>
-              <div id="consultaResultado" class="la-consulta-resultado" aria-live="polite"></div>
+          <div class="col-md-4">
+            <div class="la-card">
+              <i class="bi bi-cash-stack la-card-icon"></i>
+              <h3>Diferencias Salariales</h3>
+              <p>Horas extras no pagas, bonos retenidos y sueldos no registrados.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ============================================================
+         FORMULARIO DE CONTACTO
+         Sprint 1 (01/09/2026) - José: estructura HTML
+         Sprint 2 (22/09/2026) - Zoe: clases .la-input y validación visual
+         Sprint 3 (05/10/2026) - José: spinners + localStorage (simulado)
+         Sprint 4 (12/10/2026) - José: fetch() real hacia api/guardar.php
+         Sprint 4 (12/10/2026) - Zoe: estados de error HTTP 404/500
+         ============================================================ -->
     <section class="la-section la-contact" id="contacto">
       <div class="container">
         <div class="row g-5">
           <div class="col-lg-5">
             <span class="la-eyebrow">Contacto</span>
-            <h2>Primera consulta<br><span>sin cargo.</span></h2>
-            <p>Contanos tu situación. Si tu caso tiene recorrido judicial, te lo decimos con honestidad.</p>
+            <h2>Primera consulta <span>sin cargo.</span></h2>
+            <p>Contanos tu situación. Si tu caso tiene recorrido, te lo decimos con honestidad.</p>
             <ul class="la-contact-list">
               <li><i class="bi bi-envelope"></i> consultas@laborisasociados.com.ar</li>
               <li><i class="bi bi-telephone"></i> 011-0000-0000</li>
-              <li><i class="bi bi-geo-alt"></i> Buenos Aires, Argentina</li>
             </ul>
           </div>
           <div class="col-lg-7">
             <form class="la-form" id="contactForm" novalidate>
-              <div class="row g-3 mb-3">
+              <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label la-label" for="nombre">Nombre</label>
-                  <input class="form-control la-input" type="text" id="nombre" placeholder="Tu nombre completo" required>
-                  <div class="invalid-feedback"></div>
+                  <label class="form-label">Nombre</label>
+                  <input type="text" class="form-control la-input" name="nombre" id="nombre" required>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label la-label" for="email">Email</label>
-                  <input class="form-control la-input" type="email" id="email" placeholder="tu@email.com" required>
-                  <div class="invalid-feedback"></div>
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control la-input" name="email" id="email" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Celular</label>
+                  <input type="tel" class="form-control la-input" name="celular" id="celular" placeholder="11-1234-5678" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Tipo de consulta</label>
+                  <select class="form-select la-input" name="tipoConsulta" id="tipoConsulta" required>
+                    <option value="">Seleccioná...</option>
+                    <option value="Despido">Despido</option>
+                    <option value="Accidente">Accidente de trabajo</option>
+                    <option value="Diferencias">Diferencias salariales</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Describí tu situación</label>
+                  <textarea class="form-control la-input" name="descripcion" id="descripcion" rows="4" required></textarea>
+                </div>
+                <div class="col-12">
+                  <!-- Sprint 3 - Zoe: spinner de carga -->
+                  <button type="submit" class="btn la-btn la-btn-primary w-100" id="btnEnviar">
+                    <span id="btnText">Enviar consulta</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                  </button>
+                  <!-- Sprint 4 - Zoe: mensajes de error/éxito HTTP -->
+                  <p id="formMessage" class="text-center mt-3 fw-bold" aria-live="polite"></p>
                 </div>
               </div>
-              <div class="mb-3">
-                <label class="form-label la-label" for="celular">Celular</label>
-                <input class="form-control la-input" type="tel" id="celular" placeholder="11-XXXX-XXXX" required>
-                <small class="form-text text-muted">Formato: 11-1234-5678</small>
-                <div class="invalid-feedback"></div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label la-label" for="tipoConsulta">Tipo de consulta</label>
-                <select class="form-select la-input" id="tipoConsulta" required>
-                  <option value="">Seleccioná una opción</option>
-                  <option value="Despido sin causa">Despido sin causa</option>
-                  <option value="Accidente de trabajo">Accidente de trabajo</option>
-                  <option value="Diferencias salariales">Diferencias salariales</option>
-                  <option value="Otra consulta">Otra consulta</option>
-                </select>
-                <div class="invalid-feedback"></div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label la-label" for="descripcion">Describí tu situación</label>
-                <textarea class="form-control la-input" id="descripcion" rows="4" placeholder="¿Qué pasó? ¿Cuándo?..." required></textarea>
-                <div class="invalid-feedback"></div>
-              </div>
-              <button class="btn la-btn la-btn-primary w-100" id="btnEnviarConsulta" type="submit" disabled>
-                <span class="la-btn-text">Enviar consulta <i class="bi bi-arrow-right"></i></span>
-                <div class="la-spinner la-spinner-sm" id="spinnerEnvio" style="display:none;"></div>
-              </button>
-              <p class="la-form-message text-center mt-3" id="formMessage" aria-live="polite"></p>
             </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="adminView" class="la-admin-view" style="display:none;">
-      <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <h3> Panel de Admin (Testing) - Consultas Recibidas</h3>
-            <p>Estos datos persisten en el localStorage del navegador (Simulación Sprint 3).</p>
-            <div class="table-responsive">
-              <table class="table table-striped">
-                <thead>
-                  <tr><th>ID</th><th>Fecha</th><th>Nombre</th><th>Email</th><th>Tipo</th><th>Mensaje</th></tr>
-                </thead>
-                <tbody id="adminTableBody"></tbody>
-              </table>
-            </div>
-            <button class="btn la-btn la-btn-outline" id="btnLimpiarAdmin">Borrar datos de prueba</button>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="la-footer">
+  <!-- ============================================================
+       FOOTER
+       Sprint 1 (01/09/2026) - José
+       ============================================================ -->
+  <footer class="la-footer text-center py-4">
     <div class="container">
-      <div class="row align-items-center text-center g-3">
-        <div class="col-lg-4 text-lg-start">
-          <a class="la-brand" href="#inicio">
-            <span class="la-brand-mark"><i class="bi bi-shield-fill"></i></span>
-            <span>LABORIS<strong>&amp; ASOCIADOS</strong></span>
-          </a>
-        </div>
-        <div class="col-lg-4">
-          <p class="mb-0">© <span id="year">2026</span> Laboris · Proyecto educativo IFTS N° 21</p>
-        </div>
-        <div class="col-lg-4 text-lg-end">
-          <span>Estudio Jurídico Laboral · Buenos Aires</span>
-        </div>
-      </div>
+      <p class="mb-0">© 2026 Laboris · Proyecto educativo IFTS N° 21</p>
     </div>
   </footer>
 
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/main.js"></script>
+  <!-- JS personalizado -->
+  <script src="assets/js/script.js"></script>
 </body>
 </html>  
