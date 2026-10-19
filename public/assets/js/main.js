@@ -1,136 +1,175 @@
-// ============================================================
-// LABORIS — main.js
-//
-//   1. Año dinámico
-//   2. Navbar: transparente → oscuro al scrollear
-//   3. Botón "volver arriba"
-//   4. Sección activa (IntersectionObserver)
-//   5. CONSULTA DE EXPEDIENTE — funcionalidad clave del modelo
-//   6. Formulario de contacto
-// ============================================================
-
 "use strict";
 
+// ============================================================
+// LABORIS - main.js
+// Proyecto: Seminario de Actualización en Tecnología Web - IFTS N° 21
+// ============================================================
+
+// 1. Año dinámico en el footer
+// [ZOE - Sprint 1 | 15/10/2026] Configuración inicial del footer
 document.getElementById('year').textContent = new Date().getFullYear();
 
-const siteNav   = document.getElementById('siteNav');
-const backToTop = document.getElementById('backToTop');
+// 2. Navbar: efecto scroll (transparente → oscuro)
+// [JOSÉ - Sprint 1 | 15/10/2026] Implementación del navbar dinámico
+const siteNav = document.getElementById('siteNav');
+window.addEventListener('scroll', () => {
+  if (siteNav) siteNav.classList.toggle('scrolled', window.scrollY > 30);
+}, { passive: true });
 
-function updateScrollState() {
-  siteNav?.classList.toggle('scrolled', window.scrollY > 30);
-  backToTop?.classList.toggle('visible', window.scrollY > 450);
-}
-window.addEventListener('scroll', updateScrollState, { passive: true });
-updateScrollState();
-
-backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-// IntersectionObserver — sección activa
-const navLinks = document.querySelectorAll('.la-nav-link[data-section]');
-const sections = document.querySelectorAll('section[id]');
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      navLinks.forEach(l => l.classList.remove('active'));
-      document.querySelector(`.la-nav-link[data-section="${entry.target.id}"]`)?.classList.add('active');
-    }
-  });
-}, { root: null, rootMargin: '-25% 0px -65% 0px', threshold: 0 });
-
-sections.forEach(s => observer.observe(s));
-
-
-// ─── CONSULTA DE EXPEDIENTE ───────────────────────────────────
-//
-// El usuario ingresa su número de expediente judicial.
-// El JS devuelve un estado simulado.
-//
-// PRÓXIMO PASO (etapa backend):
-//   const res = await fetch(`/api/expediente/${numero}`);
-//   const data = await res.json();
-//
-// El endpoint FastAPI en src/routes/contact.py devolverá:
-// { numero, estado, etapa, ultima_actuacion, fecha }
-
-const expedienteInput   = document.getElementById('expedienteInput');
-const consultarBtn      = document.getElementById('consultarBtn');
+// ============================================================
+// 3. CONSULTA DE EXPEDIENTE
+// [ZOE - Sprint 2 | 17/10/2026] Conexión real con backend FastAPI
+// [JOSÉ - Sprint 3 | 19/10/2026] Cambio a parámetro ?numero= para evitar conflicto con "/"
+// ============================================================
+const expedienteInput = document.getElementById('expedienteInput');
+const consultarBtn = document.getElementById('consultarBtn');
 const consultaResultado = document.getElementById('consultaResultado');
 
-const DEMO_EXPEDIENTES = {
-  '12345/2026': {
-    estado: 'EN TRÁMITE',
-    etapa:  'Audiencia preliminar',
-    ultima: 'Notificación de fecha de audiencia enviada al empleador.',
-    fecha:  '18/08/2026',
-  },
-  '98765/2025': {
-    estado: 'SENTENCIA FAVORABLE',
-    etapa:  'Ejecución de sentencia',
-    ultima: 'El juez ordenó el pago de la indemnización. Aguardamos cumplimiento del empleador.',
-    fecha:  '10/08/2026',
-  },
-  '11111/2024': {
-    estado: 'CONCILIACIÓN ACORDADA',
-    etapa:  'Homologación',
-    ultima: 'Acuerdo firmado en el SECLO. En proceso de homologación judicial.',
-    fecha:  '05/08/2026',
-  },
-};
+if (consultarBtn && expedienteInput && consultaResultado) {
+  consultarBtn.addEventListener('click', async () => {
+    const numero = expedienteInput.value.trim();
+    
+    if (!numero || numero.length < 4) {
+      consultaResultado.className = 'la-consulta-resultado la-error';
+      consultaResultado.textContent = 'Ingresá un número válido (ej: 12345/2026).';
+      return;
+    }
+    
+    consultaResultado.className = 'la-consulta-resultado';
+    consultaResultado.textContent = 'Consultando...';
 
-function renderResultado(numero, data) {
-  consultaResultado.className = 'la-consulta-resultado la-success';
-  consultaResultado.innerHTML = `
-    <span class="la-estado-badge">${data.estado}</span>
-    <p style="font-size:13px; margin:0 0 6px; color:var(--la-white)">
-      <strong>Expte. ${numero}</strong> · Etapa: ${data.etapa}
-    </p>
-    <p style="font-size:12px; margin:0 0 6px; color:rgba(255,255,255,.65)">${data.ultima}</p>
-    <p style="font-size:10px; margin:0; color:rgba(255,255,255,.4)">Última actualización: ${data.fecha}</p>
-  `;
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/expediente?numero=${encodeURIComponent(numero)}`);
+      
+      if (response.status === 404) {
+        consultaResultado.className = 'la-consulta-resultado la-error';
+        consultaResultado.textContent = 'Expediente no encontrado.';
+      } else if (!response.ok) {
+        throw new Error('Error del servidor');
+      } else {
+        const data = await response.json();
+        consultaResultado.className = 'la-consulta-resultado la-success';
+        
+        consultaResultado.innerHTML = `
+          <strong>${data.estado}</strong><br>
+          Expte. ${data.numero_expediente} · Etapa: ${data.etapa || 'N/A'}<br>
+          ${data.caratula || ''}<br>
+          Fecha: ${data.fecha || 'N/A'}
+        `;
+      }
+    } catch (error) {
+      consultaResultado.className = 'la-consulta-resultado la-error';
+      consultaResultado.textContent = 'Error de conexión.';
+    }
+  });
+
+  expedienteInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      consultarBtn.click();
+    }
+  });
 }
 
-function renderError(msg) {
-  consultaResultado.className = 'la-consulta-resultado la-error';
-  consultaResultado.textContent = msg;
+// ============================================================
+// 4. FORMULARIO DE CONTACTO
+// [ZOE - Sprint 2 | 17/10/2026] Conexión real con endpoint POST /api/contacto
+// [JOSÉ - Sprint 3 | 19/10/2026] Corrección de IDs del HTML para lectura correcta de campos
+// [ZOE - Sprint 4 | 20/10/2026] Agregado efecto fade-out del mensaje de éxito
+// ============================================================
+const contactForm = document.getElementById('contactForm');
+const formMessage = document.getElementById('formMessage');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const btnEnviar = contactForm.querySelector('button[type="submit"]');
+    if (btnEnviar) {
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Enviando...';
+    }
+    if (formMessage) {
+      formMessage.textContent = 'Procesando...';
+      formMessage.style.color = 'var(--la-red)';
+      formMessage.style.opacity = '1';
+    }
+
+    try {
+      const datos = {
+        nombre: document.getElementById('nombre')?.value.trim() || '',
+        email: document.getElementById('email')?.value.trim() || '',
+        celular: null,
+        tipo_consulta: document.getElementById('tipoConsulta')?.value || '',
+        mensaje: document.getElementById('descripcion')?.value.trim() || ''
+      };
+
+      const response = await fetch('http://127.0.0.1:8000/api/contacto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+      });
+
+      if (response.ok) {
+        if (formMessage) {
+          formMessage.textContent = '✅ ¡Consulta enviada con éxito!';
+          formMessage.style.color = 'green';
+          formMessage.style.opacity = '1';
+          formMessage.style.transition = 'opacity 0.5s ease';
+          
+          // [ZOE - Sprint 4 | 20/10/2026] Efecto fade-out después de 3 segundos
+          setTimeout(() => {
+            formMessage.style.opacity = '0';
+            setTimeout(() => {
+              formMessage.textContent = '';
+            }, 500);
+          }, 3000);
+        }
+        contactForm.reset();
+      } else {
+        const err = await response.json();
+        throw new Error(err.detail || 'Error del servidor');
+      }
+    } catch (error) {
+      if (formMessage) {
+        formMessage.textContent = '❌ Error: ' + error.message;
+        formMessage.style.color = 'red';
+      }
+    } finally {
+      if (btnEnviar) {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Enviar consulta';
+      }
+    }
+  });
 }
 
-consultarBtn?.addEventListener('click', () => {
-  const numero = expedienteInput.value.trim();
+// ============================================================
+// 5. MODO OSCURO/CLARO - Toggle
+// [ZOE - Sprint 4 | 20/10/2026] Botón de tema con persistencia en localStorage
+// ============================================================
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
 
-  if (!numero || numero.length < 4) {
-    renderError('Ingresá un número de expediente válido (ej: 12345/2026).');
-    return;
+if (themeToggle && themeIcon) {
+  const savedTheme = localStorage.getItem('laboris-theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    themeIcon.classList.remove('bi-sun-fill');
+    themeIcon.classList.add('bi-moon-fill');
   }
 
-  consultaResultado.className = 'la-consulta-resultado';
-  consultaResultado.innerHTML = '<p style="color:rgba(255,255,255,.45); font-size:12px">Consultando el sistema judicial...</p>';
-
-  setTimeout(() => {
-    const data = DEMO_EXPEDIENTES[numero];
-    if (data) {
-      renderResultado(numero, data);
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    
+    if (document.body.classList.contains('dark-mode')) {
+      themeIcon.classList.remove('bi-sun-fill');
+      themeIcon.classList.add('bi-moon-fill');
+      localStorage.setItem('laboris-theme', 'dark');
     } else {
-      renderResultado(numero, {
-        estado: 'EN TRÁMITE',
-        etapa:  'Instrucción del expediente',
-        ultima: 'Demo — en la etapa backend este resultado vendrá de FastAPI. Tu expediente fue localizado en el sistema.',
-        fecha:  new Date().toLocaleDateString('es-AR'),
-      });
+      themeIcon.classList.remove('bi-moon-fill');
+      themeIcon.classList.add('bi-sun-fill');
+      localStorage.setItem('laboris-theme', 'light');
     }
-  }, 700);
-});
-
-expedienteInput?.addEventListener('keydown', e => { if (e.key === 'Enter') consultarBtn.click(); });
-
-
-// ─── FORMULARIO DE CONTACTO ───────────────────────────────────
-const contactForm = document.getElementById('contactForm');
-const formMessage  = document.getElementById('formMessage');
-
-contactForm?.addEventListener('submit', event => {
-  event.preventDefault();
-  if (!contactForm.checkValidity()) { contactForm.reportValidity(); return; }
-  formMessage.textContent = '✓ Consulta recibida. Te respondemos a la brevedad. Primera consulta sin cargo.';
-  contactForm.reset();
-});
+  });
+}

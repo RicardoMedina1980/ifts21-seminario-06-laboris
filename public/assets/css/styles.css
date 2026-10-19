@@ -134,8 +134,6 @@ a { text-decoration: none; color: inherit; }
 
 /* ── Hero ── */
 .la-hero {
-  /* min-height en vez de height fijo: el hero crece si el contenido
-     no entra. Así no se corta en pantallas medianas con el h1 de 3 líneas. */
   min-height: 100svh;
   padding-bottom: 60px;
   position: relative; display: flex; align-items: center;
@@ -429,4 +427,100 @@ a { text-decoration: none; color: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ============================================================
+   MODO OSCURO - Toggle
+   [ZOE - Sprint 4 | 20/10/2026]
+   ============================================================ */
+
+.la-theme-toggle {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: var(--la-white) !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  min-height: auto !important;
+  padding: 0 !important;
+}
+
+.la-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: var(--la-gold) !important;
+  color: var(--la-gold) !important;
+  transform: rotate(15deg);
+}
+
+body.dark-mode {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .la-areas,
+body.dark-mode .la-about,
+body.dark-mode .la-honorarios,
+body.dark-mode .la-contact {
+  background: #1a1a1a;
+}
+
+body.dark-mode .la-area-card,
+body.dark-mode .la-price-card,
+body.dark-mode .la-form {
+  background: #252525;
+  border-color: #333333;
+}
+
+body.dark-mode .la-area-card h3,
+body.dark-mode .la-price-card h3,
+body.dark-mode .la-price,
+body.dark-mode .la-label {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .la-area-card p,
+body.dark-mode .la-price-card > p,
+body.dark-mode .la-honorarios p,
+body.dark-mode .la-contact p,
+body.dark-mode .la-about p {
+  color: #a0a0a0;
+}
+
+body.dark-mode .la-form .la-input,
+body.dark-mode .la-select {
+  background: #1a1a1a !important;
+  border-color: #333333 !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .la-form .la-input::placeholder,
+body.dark-mode .la-select option {
+  color: #888 !important;
+}
+
+body.dark-mode .la-footer {
+  background: #0a0a0a;
+}
+
+body.dark-mode .la-consulta {
+  background: #121212;
+}
+
+body.dark-mode .la-consulta-box {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .la-price-featured {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+}
+
+body.dark-mode .la-navbar.scrolled .la-theme-toggle {
+  border-color: rgba(255, 255, 255, 0.2);
 }

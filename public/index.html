@@ -11,70 +11,53 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Bootstrap 5 CSS — andamiaje estructural -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-  <!-- CSS personalizado — identidad visual Laboris (prefijo la-) -->
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
   <a class="la-skip-link" href="#contenido">Saltar al contenido</a>
 
-  <!-- =====================================================
-       NAVBAR — transparente → oscuro al scrollear
-       Bootstrap: navbar navbar-expand-lg fixed-top
-       Custom: la-navbar, la-brand, la-nav-link
-       ===================================================== -->
   <nav class="navbar navbar-expand-lg fixed-top la-navbar" id="siteNav">
     <div class="container">
       <a class="navbar-brand la-brand" href="#inicio">
         <span class="la-brand-mark"><i class="bi bi-shield-fill"></i></span>
         <span>LABORIS<strong>&amp; ASOCIADOS</strong></span>
       </a>
-      <button class="navbar-toggler la-toggler" type="button"
-              data-bs-toggle="collapse" data-bs-target="#navLinks"
-              aria-controls="navLinks" aria-expanded="false" aria-label="Abrir menú">
+      <button class="navbar-toggler la-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Abrir menú">
         <span></span><span></span><span></span>
       </button>
       <div class="collapse navbar-collapse" id="navLinks">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-4">
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#inicio"   data-section="inicio">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link la-nav-link" href="#areas"    data-section="areas">Áreas</a></li>
+          <li class="nav-item"><a class="nav-link la-nav-link" href="#inicio" data-section="inicio">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link la-nav-link" href="#areas" data-section="areas">Áreas</a></li>
           <li class="nav-item"><a class="nav-link la-nav-link" href="#consulta" data-section="consulta">Mi expediente</a></li>
           <li class="nav-item"><a class="nav-link la-nav-link" href="#honorarios" data-section="honorarios">Honorarios</a></li>
           <li class="nav-item"><a class="nav-link la-nav-link" href="#contacto" data-section="contacto">Contacto</a></li>
-          <li class="nav-item"><a class="nav-link la-nav-cta"  href="#consulta">Consultar expediente</a></li>
+          <li class="nav-item"><a class="nav-link la-nav-cta" href="#consulta">Consultar expediente</a></li>
         </ul>
+        <!-- [ZOE - Sprint 4 | 20/10/2026] Botón de modo oscuro/claro -->
+        <button class="btn la-theme-toggle ms-lg-3" id="themeToggle" type="button" aria-label="Cambiar tema">
+          <i class="bi bi-sun-fill" id="themeIcon"></i>
+        </button>
       </div>
     </div>
   </nav>
 
   <main id="contenido">
-
-    <!-- ===================================================
-         HERO — Bootstrap: row align-items-end,
-           col-lg-7, col-lg-5 d-none d-lg-block
-         =================================================== -->
     <section class="la-hero" id="inicio">
       <div class="la-hero-bg" aria-hidden="true"></div>
       <div class="la-hero-overlay" aria-hidden="true"></div>
       <div class="container la-hero-content">
         <div class="row align-items-end">
           <div class="col-lg-7">
-            <span class="la-eyebrow la-eyebrow-light">
-              <i class="bi bi-shield-fill"></i> Estudio Jurídico Laboral · Buenos Aires
-            </span>
+            <span class="la-eyebrow la-eyebrow-light"><i class="bi bi-shield-fill"></i> Estudio Jurídico Laboral · Buenos Aires</span>
             <h1>Cuando el trabajo<br>termina, empieza<br><span>nuestra tarea.</span></h1>
             <p>Especialistas en derecho laboral, accidentes de trabajo y conflictos laborales. Defendemos tus derechos con experiencia y compromiso.</p>
             <div class="la-hero-actions">
-              <a class="btn la-btn la-btn-primary" href="#consulta">
-                <i class="bi bi-search"></i> Consultar mi expediente
-              </a>
-              <a class="btn la-btn la-btn-outline" href="#areas">
-                Conocé nuestras áreas <i class="bi bi-arrow-down"></i>
-              </a>
+              <a class="btn la-btn la-btn-primary" href="#consulta"><i class="bi bi-search"></i> Consultar mi expediente</a>
+              <a class="btn la-btn la-btn-outline" href="#areas">Conocé nuestras áreas <i class="bi bi-arrow-down"></i></a>
             </div>
             <div class="la-hero-stats">
               <div><strong>+1.200</strong><span>Casos resueltos</span></div>
@@ -96,9 +79,6 @@
       </div>
     </section>
 
-    <!-- ===================================================
-         ÁREAS DE PRÁCTICA — Bootstrap: row g-3, col-lg-4 col-md-6
-         =================================================== -->
     <section class="la-section la-areas" id="areas">
       <div class="container">
         <div class="row align-items-end mb-5">
@@ -114,8 +94,8 @@
           <div class="col-lg-4 col-md-6">
             <article class="la-area-card">
               <div class="la-area-icon"><i class="bi bi-file-earmark-x"></i></div>
-              <h3>Laboris</h3>
-              <p>Laboris sin causa, con causa, indirectos y discriminatorios. Calculamos tu liquidación y reclamamos lo que te corresponde.</p>
+              <h3>Despidos</h3>
+              <p>Despidos sin causa, con causa, indirectos y discriminatorios. Calculamos tu liquidación y reclamamos lo que te corresponde.</p>
               <a href="#contacto">Consultar <i class="bi bi-arrow-up-right"></i></a>
             </article>
           </div>
@@ -139,7 +119,7 @@
             <article class="la-area-card">
               <div class="la-area-icon"><i class="bi bi-person-x"></i></div>
               <h3>Discriminación laboral</h3>
-              <p>Laboris por embarazo, enfermedad, actividad gremial o cualquier motivo discriminatorio. Reincorporación o indemnización.</p>
+              <p>Despidos por embarazo, enfermedad, actividad gremial o cualquier motivo discriminatorio. Reincorporación o indemnización.</p>
               <a href="#contacto">Consultar <i class="bi bi-arrow-up-right"></i></a>
             </article>
           </div>
@@ -163,9 +143,6 @@
       </div>
     </section>
 
-    <!-- ===================================================
-         ESTUDIO — Bootstrap: row align-items-center g-5
-         =================================================== -->
     <section class="la-about">
       <div class="container">
         <div class="row align-items-center g-5">
@@ -182,18 +159,12 @@
               <li><i class="bi bi-check-circle-fill"></i> Seguimiento permanente de tu expediente</li>
               <li><i class="bi bi-check-circle-fill"></i> Experiencia en todas las instancias judiciales</li>
             </ul>
-            <a class="la-text-link" href="#contacto">
-              Hablemos de tu caso <i class="bi bi-arrow-right"></i>
-            </a>
+            <a class="la-text-link" href="#contacto">Hablemos de tu caso <i class="bi bi-arrow-right"></i></a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ===================================================
-         CONSULTA DE EXPEDIENTE — Funcionalidad clave
-         Bootstrap: row align-items-center g-5, col-lg-6
-         =================================================== -->
     <section class="la-consulta" id="consulta">
       <div class="container">
         <div class="row align-items-center g-5">
@@ -212,33 +183,18 @@
               <div class="la-consulta-icon"><i class="bi bi-file-earmark-text"></i></div>
               <h3>Consultar expediente</h3>
               <p>Número de expediente (sin guiones ni espacios)</p>
-
               <div class="la-consulta-form">
-                <input class="form-control la-input"
-                       id="expedienteInput"
-                       type="text"
-                       placeholder="Ej: 12345/2026"
-                       maxlength="12"
-                       aria-label="Número de expediente">
-                <button class="btn la-btn la-btn-primary" id="consultarBtn" type="button">
-                  <i class="bi bi-search"></i> Consultar
-                </button>
+                <input class="form-control la-input" id="expedienteInput" type="text" placeholder="Ej: 12345/2026" maxlength="12" aria-label="Número de expediente">
+                <button class="btn la-btn la-btn-primary" id="consultarBtn" type="button"><i class="bi bi-search"></i> Consultar</button>
               </div>
-
               <div id="consultaResultado" class="la-consulta-resultado" aria-live="polite"></div>
-
-              <small class="la-consulta-nota">
-                Demo — en la etapa backend consultará GET /api/expediente/{numero} en FastAPI
-              </small>
+              <small class="la-consulta-nota">Demo — en la etapa backend consultará GET /api/expediente en FastAPI</small>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ===================================================
-         HONORARIOS — Bootstrap: row g-3, col-lg-4 col-md-8
-         =================================================== -->
     <section class="la-section la-honorarios" id="honorarios">
       <div class="container">
         <div class="text-center mb-5">
@@ -276,15 +232,10 @@
             </article>
           </div>
         </div>
-        <p class="text-center la-pricing-note mt-4">
-          * Valores ficticios para el proyecto educativo. Honorarios reales sujetos a evaluación del caso.
-        </p>
+        <p class="text-center la-pricing-note mt-4">* Valores ficticios para el proyecto educativo. Honorarios reales sujetos a evaluación del caso.</p>
       </div>
     </section>
 
-    <!-- ===================================================
-         CONTACTO — Bootstrap: row g-5, col-lg-5, col-lg-7
-         =================================================== -->
     <section class="la-section la-contact" id="contacto">
       <div class="container">
         <div class="row g-5">
@@ -293,7 +244,7 @@
             <h2>Primera consulta<br><span>sin cargo.</span></h2>
             <p>Contanos tu situación. Si tu caso tiene recorrido judicial, te lo decimos con honestidad. No cobramos consultas que no tienen sentido.</p>
             <ul class="la-contact-list">
-              <li><i class="bi bi-envelope"></i> consultas@derecho laboralasociados.com.ar</li>
+              <li><i class="bi bi-envelope"></i> consultas@laborisasociados.com.ar</li>
               <li><i class="bi bi-telephone"></i> 011-0000-0000</li>
               <li><i class="bi bi-geo-alt"></i> Buenos Aires, Argentina</li>
               <li><i class="bi bi-clock"></i> Lunes a viernes · 09:00 a 18:00</li>
@@ -307,19 +258,17 @@
             <form class="la-form" id="contactForm" novalidate>
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                  <label class="form-label la-label">Nombre</label>
-                  <input class="form-control la-input" type="text" name="name"
-                         placeholder="Tu nombre completo" required minlength="3">
+                  <label class="form-label la-label" for="nombre">Nombre</label>
+                  <input class="form-control la-input" id="nombre" type="text" name="name" placeholder="Tu nombre completo" required minlength="3">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label la-label">Email</label>
-                  <input class="form-control la-input" type="email" name="email"
-                         placeholder="tu@email.com" required>
+                  <label class="form-label la-label" for="email">Email</label>
+                  <input class="form-control la-input" id="email" type="email" name="email" placeholder="tu@email.com" required>
                 </div>
               </div>
               <div class="mb-3">
-                <label class="form-label la-label">Tipo de consulta</label>
-                <select class="form-select la-select" name="subject">
+                <label class="form-label la-label" for="tipoConsulta">Tipo de consulta</label>
+                <select class="form-select la-select" id="tipoConsulta" name="subject" required>
                   <option value="">Seleccioná una opción</option>
                   <option>Despido sin causa</option>
                   <option>Accidente de trabajo</option>
@@ -330,21 +279,16 @@
                 </select>
               </div>
               <div class="mb-3">
-                <label class="form-label la-label">Describí tu situación</label>
-                <textarea class="form-control la-input" name="message"
-                          rows="5" placeholder="¿Qué pasó? ¿Cuándo? ¿Cuántos años de antigüedad tenés?..."
-                          required minlength="10"></textarea>
+                <label class="form-label la-label" for="descripcion">Describí tu situación</label>
+                <textarea class="form-control la-input" id="descripcion" name="message" rows="5" placeholder="¿Qué pasó? ¿Cuándo? ¿Cuántos años de antigüedad tenés?..." required minlength="10"></textarea>
               </div>
-              <button class="btn la-btn la-btn-primary w-100" type="submit">
-                Enviar consulta <i class="bi bi-arrow-right"></i>
-              </button>
+              <button class="btn la-btn la-btn-primary w-100" type="submit">Enviar consulta <i class="bi bi-arrow-right"></i></button>
               <p class="la-form-message" id="formMessage" aria-live="polite"></p>
             </form>
           </div>
         </div>
       </div>
     </section>
-
   </main>
 
   <footer class="la-footer">
