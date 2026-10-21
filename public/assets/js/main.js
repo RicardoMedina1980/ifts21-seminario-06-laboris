@@ -6,11 +6,9 @@
 // ============================================================
 
 // 1. Año dinámico en el footer
-// [ZOE - Sprint 1 | 15/10/2026] Configuración inicial del footer
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // 2. Navbar: efecto scroll (transparente → oscuro)
-// [JOSÉ - Sprint 1 | 15/10/2026] Implementación del navbar dinámico
 const siteNav = document.getElementById('siteNav');
 window.addEventListener('scroll', () => {
   if (siteNav) siteNav.classList.toggle('scrolled', window.scrollY > 30);
@@ -18,8 +16,6 @@ window.addEventListener('scroll', () => {
 
 // ============================================================
 // 3. CONSULTA DE EXPEDIENTE
-// [ZOE - Sprint 2 | 17/10/2026] Conexión real con backend FastAPI
-// [JOSÉ - Sprint 3 | 19/10/2026] Cambio a parámetro ?numero= para evitar conflicto con "/"
 // ============================================================
 const expedienteInput = document.getElementById('expedienteInput');
 const consultarBtn = document.getElementById('consultarBtn');
@@ -72,10 +68,7 @@ if (consultarBtn && expedienteInput && consultaResultado) {
 }
 
 // ============================================================
-// 4. FORMULARIO DE CONTACTO
-// [ZOE - Sprint 2 | 17/10/2026] Conexión real con endpoint POST /api/contacto
-// [JOSÉ - Sprint 3 | 19/10/2026] Corrección de IDs del HTML para lectura correcta de campos
-// [ZOE - Sprint 4 | 20/10/2026] Agregado efecto fade-out del mensaje de éxito
+// 4. FORMULARIO DE CONTACTO (Con efecto Fade-Out de UX)
 // ============================================================
 const contactForm = document.getElementById('contactForm');
 const formMessage = document.getElementById('formMessage');
@@ -91,7 +84,7 @@ if (contactForm) {
     }
     if (formMessage) {
       formMessage.textContent = 'Procesando...';
-      formMessage.style.color = 'var(--la-red)';
+      formMessage.style.color = 'var(--la-muted)';
       formMessage.style.opacity = '1';
     }
 
@@ -112,17 +105,20 @@ if (contactForm) {
 
       if (response.ok) {
         if (formMessage) {
-          formMessage.textContent = '✅ ¡Consulta enviada con éxito!';
-          formMessage.style.color = 'green';
+          // 1. Mostrar mensaje de éxito
+          formMessage.textContent = '✅ ¡Consulta enviada con éxito! Nos contactaremos a la brevedad.';
+          formMessage.style.color = '#28a745'; // Verde éxito
           formMessage.style.opacity = '1';
-          formMessage.style.transition = 'opacity 0.5s ease';
           
-          // [ZOE - Sprint 4 | 20/10/2026] Efecto fade-out después de 3 segundos
+          // 2. Programar el desvanecimiento después de 3 segundos
           setTimeout(() => {
-            formMessage.style.opacity = '0';
+            formMessage.style.opacity = '0'; // Activa la transición CSS de 0.8s
+            
+            // 3. Limpiar el texto solo después de que la animación termine
             setTimeout(() => {
               formMessage.textContent = '';
-            }, 500);
+              formMessage.style.color = 'var(--la-red)'; // Restaurar color original
+            }, 800); // 800ms coincide con el transition del CSS
           }, 3000);
         }
         contactForm.reset();
@@ -133,7 +129,8 @@ if (contactForm) {
     } catch (error) {
       if (formMessage) {
         formMessage.textContent = '❌ Error: ' + error.message;
-        formMessage.style.color = 'red';
+        formMessage.style.color = '#dc3545'; // Rojo error
+        formMessage.style.opacity = '1';
       }
     } finally {
       if (btnEnviar) {
@@ -146,7 +143,6 @@ if (contactForm) {
 
 // ============================================================
 // 5. MODO OSCURO/CLARO - Toggle
-// [ZOE - Sprint 4 | 20/10/2026] Botón de tema con persistencia en localStorage
 // ============================================================
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
