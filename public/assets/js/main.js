@@ -31,14 +31,12 @@ if (consultarBtn && expedienteInput && consultaResultado) {
       return;
     }
     
-    // Estado de carga visual
     consultarBtn.disabled = true;
     consultarBtn.innerHTML = '<span class="spinner-border"></span> Consultando...';
     consultaResultado.className = 'la-consulta-resultado';
     consultaResultado.textContent = 'Conectando con el servidor...';
 
     try {
-      // Conexión directa al backend local (Sprint 4)
       const response = await fetch(`http://127.0.0.1:8000/api/expediente?numero=${encodeURIComponent(numero)}`);
       
       if (response.status === 404) {
@@ -49,7 +47,6 @@ if (consultarBtn && expedienteInput && consultaResultado) {
       } else {
         const data = await response.json();
         consultaResultado.className = 'la-consulta-resultado la-success';
-        
         consultaResultado.innerHTML = `
           <strong>${data.estado}</strong><br>
           Expte. ${data.numero_expediente} · Etapa: ${data.etapa || 'N/A'}<br>
@@ -59,20 +56,22 @@ if (consultarBtn && expedienteInput && consultaResultado) {
 
         // ⏱️ TEMPORIZADOR: Auto-ocultamiento a los 10 segundos
         setTimeout(() => {
+          // 1. Desvanecer el resultado visualmente
           consultaResultado.classList.add('la-fade-out');
           
+          // 2. Limpiar TODO (resultado e input) después de la animación
           setTimeout(() => {
             consultaResultado.innerHTML = '';
-            consultaResultado.className = 'la-consulta-resultado';
+            consultaResultado.className = 'la-consulta-resultado'; // Resetea clases
+            expedienteInput.value = ''; // ¡LIMPIA EL INPUT TAMBIÉN!
             mostrarMensajeSeguridad();
-          }, 500); // Espera a que termine el fade-out (0.5s)
-        }, 10000); // 10 segundos
+          }, 600); // 600ms para que alcance a verse el fade-out
+        }, 10000); // 10 segundos (cambiá a 5000 si querés que sea más rápido)
       }
     } catch (error) {
       consultaResultado.className = 'la-consulta-resultado la-error';
       consultaResultado.textContent = 'Error de conexión. Verificá que el backend esté corriendo.';
     } finally {
-      // Restaurar estado del botón
       consultarBtn.disabled = false;
       consultarBtn.innerHTML = '<i class="bi bi-search"></i> Consultar';
     }
@@ -104,15 +103,17 @@ function mostrarMensajeSeguridad() {
   }
 
   // Mostrar con animación
-  setTimeout(() => mensaje.classList.add('activo'), 10);
+  setTimeout(() => mensaje.classList.add('activo'), 50);
 
   // Ocultar después de 5 segundos
   setTimeout(() => {
     mensaje.classList.remove('activo');
     setTimeout(() => {
-      if (mensaje.parentNode) mensaje.parentNode.removeChild(mensaje);
-    }, 500); // Espera a que termine el fade-out
-  }, 5000); // 5 segundos visible
+      if (mensaje.parentNode) {
+        mensaje.parentNode.removeChild(mensaje);
+      }
+    }, 600);
+  }, 5000);
 }
 
 // ============================================================
@@ -213,4 +214,4 @@ if (themeToggle && themeIcon) {
     }
   });
 }
-// FIN DEL ARCHIVO. No hay código suelto debajo de esta línea.
+// FIN DEL ARCHIVO.
