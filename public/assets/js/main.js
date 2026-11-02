@@ -15,7 +15,7 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 // ============================================================
-// 3. CONSULTA DE EXPEDIENTE
+// 3. CONSULTA DE EXPEDIENTE (Con auto-ocultamiento y seguridad)
 // ============================================================
 const expedienteInput = document.getElementById('expedienteInput');
 const consultarBtn = document.getElementById('consultarBtn');
@@ -56,6 +56,17 @@ if (consultarBtn && expedienteInput && consultaResultado) {
           ${data.caratula || ''}<br>
           Fecha: ${data.fecha || 'N/A'}
         `;
+
+        // ⏱️ TEMPORIZADOR: Auto-ocultamiento a los 10 segundos
+        setTimeout(() => {
+          consultaResultado.classList.add('la-fade-out');
+          
+          setTimeout(() => {
+            consultaResultado.innerHTML = '';
+            consultaResultado.className = 'la-consulta-resultado';
+            mostrarMensajeSeguridad();
+          }, 500); // Espera a que termine el fade-out (0.5s)
+        }, 10000); // 10 segundos
       }
     } catch (error) {
       consultaResultado.className = 'la-consulta-resultado la-error';
@@ -73,6 +84,35 @@ if (consultarBtn && expedienteInput && consultaResultado) {
       consultarBtn.click();
     }
   });
+}
+
+// ============================================================
+// FUNCIÓN AUXILIAR: Mensaje de Seguridad Emergente
+// ============================================================
+function mostrarMensajeSeguridad() {
+  let mensaje = document.getElementById('mensajeSeguridadPopup');
+  if (!mensaje) {
+    mensaje = document.createElement('div');
+    mensaje.id = 'mensajeSeguridadPopup';
+    mensaje.className = 'la-mensaje-seguridad';
+    mensaje.innerHTML = `
+      <i class="bi bi-shield-check"></i>
+      <p><strong>Información protegida</strong></p>
+      <p>Por cuestiones de seguridad, le enviaremos su información requerida a su e-mail personal.</p>
+    `;
+    document.body.appendChild(mensaje);
+  }
+
+  // Mostrar con animación
+  setTimeout(() => mensaje.classList.add('activo'), 10);
+
+  // Ocultar después de 5 segundos
+  setTimeout(() => {
+    mensaje.classList.remove('activo');
+    setTimeout(() => {
+      if (mensaje.parentNode) mensaje.parentNode.removeChild(mensaje);
+    }, 500); // Espera a que termine el fade-out
+  }, 5000); // 5 segundos visible
 }
 
 // ============================================================
@@ -100,7 +140,7 @@ if (contactForm) {
       const datos = {
         nombre: document.getElementById('nombre')?.value.trim() || '',
         email: document.getElementById('email')?.value.trim() || '',
-        celular: document.getElementById('celular')?.value.trim() || null, // Campo celular integrado
+        celular: document.getElementById('celular')?.value.trim() || null,
         tipo_consulta: document.getElementById('tipoConsulta')?.value || '',
         mensaje: document.getElementById('descripcion')?.value.trim() || ''
       };
@@ -113,20 +153,16 @@ if (contactForm) {
 
       if (response.ok) {
         if (formMessage) {
-          // 1. Mostrar mensaje de éxito
           formMessage.textContent = '✅ ¡Consulta enviada con éxito! Nos contactaremos a la brevedad.';
-          formMessage.style.color = '#28a745'; // Verde éxito
+          formMessage.style.color = '#28a745';
           formMessage.style.opacity = '1';
           
-          // 2. Programar el desvanecimiento después de 3 segundos
           setTimeout(() => {
-            formMessage.style.opacity = '0'; // Activa la transición CSS de 0.8s
-            
-            // 3. Limpiar el texto solo después de que la animación termine
+            formMessage.style.opacity = '0';
             setTimeout(() => {
               formMessage.textContent = '';
-              formMessage.style.color = 'var(--la-red)'; // Restaurar color original
-            }, 800); // 800ms coincide con el transition del CSS
+              formMessage.style.color = 'var(--la-red)';
+            }, 800);
           }, 3000);
         }
         contactForm.reset();
@@ -137,7 +173,7 @@ if (contactForm) {
     } catch (error) {
       if (formMessage) {
         formMessage.textContent = '❌ Error: ' + error.message;
-        formMessage.style.color = '#dc3545'; // Rojo error
+        formMessage.style.color = '#dc3545';
         formMessage.style.opacity = '1';
       }
     } finally {
